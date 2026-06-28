@@ -43,11 +43,14 @@ export function MobileBottomNav() {
       id: 'account',
       label: 'Account',
       icon: User,
-      onClick: () => router.push('/profile'),
+      // Active on /profile when NOT the wishlist tab
       active: pathname === '/profile' && currentTab !== 'wishlist',
+      // Always push to /profile — replace ensures page re-mounts even from /profile
+      onClick: () => router.push('/profile'),
     },
   ];
 
+  // Fall back to 0 (Home) if nothing is active so the pill never disappears
   const activeIndex = navItems.findIndex((n) => n.active);
 
   return (
