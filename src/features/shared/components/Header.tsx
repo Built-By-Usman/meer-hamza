@@ -4,10 +4,10 @@ import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Menu, Search, Heart, ShoppingBag, X, ChevronDown, Compass, Award, Percent, Sparkles } from 'lucide-react';
+import { Menu, Search, Heart, ShoppingBag, X, ChevronDown, Compass, Award, Percent, Sparkles, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+
 import { ThemeToggle } from './ThemeToggle';
 import { SearchPalette } from './SearchPalette';
 import { CartDrawer } from '@/features/cart/components/CartDrawer';
@@ -338,124 +338,191 @@ export function Header() {
       {/* Global Command Palette search */}
       <SearchPalette isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
-      {/* Mobile Drawer Navigation Hamburger Menu */}
-      <Sheet isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} side="left">
-        <SheetHeader className="flex justify-between items-center pr-4">
-          <SheetTitle className="tracking-widest">MENU</SheetTitle>
-        </SheetHeader>
-        <div className="flex flex-col h-[calc(100vh-80px)] justify-between p-6">
-          <div className="flex flex-col space-y-3 text-base font-semibold overflow-y-auto no-scrollbar">
-            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors py-2 border-b">
-              Home
-            </Link>
-            <div className="flex flex-col space-y-1.5 py-2 border-b">
-              <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Shop Categories</span>
-              <Link href="/category/oud-collection" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors pl-2 py-1 text-sm font-medium">
-                Oud & Arabic
-              </Link>
-              <Link href="/category/woody-oriental" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors pl-2 py-1 text-sm font-medium">
-                Woody & Oriental
-              </Link>
-              <Link href="/category/fresh-floral" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors pl-2 py-1 text-sm font-medium">
-                Fresh & Floral
-              </Link>
-              <Link href="/category/mens-perfumes" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors pl-2 py-1 text-sm font-medium">
-                Pour Homme (Men)
-              </Link>
-              <Link href="/category/womens-perfumes" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors pl-2 py-1 text-sm font-medium">
-                Pour Femme (Women)
-              </Link>
-              <Link href="/categories" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors pl-2 py-1 text-sm text-primary font-semibold">
-                All Collections
-              </Link>
-            </div>
-            
-            {/* Wishlist Link inside Mobile Drawer */}
-            <Link
-              href="/profile?tab=wishlist"
+      {/* Mobile Drawer Navigation — animated dark luxury side nav */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-50 flex overflow-hidden">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="hover:text-primary transition-colors py-2 border-b flex items-center justify-between"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+
+            {/* Drawer panel */}
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+              className="relative flex flex-col h-full w-[82vw] max-w-[340px] bg-zinc-950 shadow-2xl z-10 overflow-hidden"
             >
-              <span>Wishlist</span>
-              {wishlistItemsCount > 0 && (
-                <Badge className="text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full p-0">
-                  {wishlistItemsCount}
-                </Badge>
-              )}
-            </Link>
+              {/* Gold accent left bar */}
+              <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-primary/80 via-primary/40 to-transparent" />
 
-             <Link href="/category/all?filter=new" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors py-2 border-b">
-              New Arrivals
-             </Link>
-             <button
-               onClick={() => {
-                 setIsMobileMenuOpen(false);
-                 setIsQuizOpen(true);
-               }}
-               className="hover:text-primary transition-colors py-2 border-b text-primary font-bold text-left flex items-center gap-1.5 cursor-pointer"
-             >
-               <Sparkles className="h-4 w-4 fill-primary/10" /> Fragrance Finder Quiz
-             </button>
-          </div>
-
-          {/* Bottom mobile drawer info (User session & theme) */}
-          <div className="border-t pt-4 space-y-4 text-left">
-            {/* User Session status */}
-            {isAuthenticated && user ? (
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 rounded-full overflow-hidden border relative flex-shrink-0">
-                    <OptimizedImage src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100'} alt={user.firstName} fill />
+              {/* Header */}
+              <div className="flex items-center justify-between px-7 pt-10 pb-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-7 w-7 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center overflow-hidden">
+                    <Image src="/logo.png" alt="Logo" width={18} height={18} className="object-contain" />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-foreground truncate">{user.firstName} {user.lastName}</p>
-                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                  </div>
+                  <span className="font-serif italic text-sm font-light tracking-[0.22em] text-white/90">MEER HAMZA</span>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" onClick={() => { setIsMobileMenuOpen(false); router.push('/profile'); }} className="text-xs h-8 cursor-pointer w-full">
-                    Account
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      useAuthStore.getState().logout();
-                      toast.success('Logged out successfully');
-                      router.push('/');
-                    }}
-                    className="text-xs h-8 cursor-pointer w-full text-destructive border-destructive/20 hover:bg-destructive/5"
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-xs text-muted-foreground">Sign in to sync your wishlist and place orders.</p>
-                <Button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    // trigger login modal open
-                    const btn = document.querySelector('[aria-label="Toggle theme"]') as HTMLElement;
-                    if (btn) setIsMobileMenuOpen(false);
-                    // Open Login Modal
-                    setIsMobileMenuOpen(false);
-                    setIsSearchOpen(false);
-                    router.push('/profile'); // routes to profile page which prompts sign in
-                  }}
-                  className="w-full text-xs h-9 cursor-pointer"
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-7 h-7 flex items-center justify-center rounded-full bg-white/8 hover:bg-white/14 text-white/60 hover:text-white transition-colors"
                 >
-                  Sign In Demo Account
-                </Button>
+                  <X className="h-4 w-4" />
+                </button>
               </div>
-            )}
 
-            {/* Theme Toggle removed for light theme force */}
+              {/* Nav items with stagger */}
+              <div className="flex-1 overflow-y-auto no-scrollbar px-5">
+                {/* Primary nav */}
+                {[
+                  { label: 'Home', href: '/', icon: Home },
+                  { label: 'New Arrivals', href: '/category/all?filter=new', icon: Sparkles },
+                ].map((item, i) => {
+                  const Icon = item.icon;
+                  return (
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, x: -18 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 + i * 0.06, type: 'spring', stiffness: 300, damping: 28 }}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3.5 py-3.5 border-b border-white/6 text-white/75 hover:text-white hover:border-primary/30 group transition-colors"
+                      >
+                        <Icon className="h-4 w-4 text-primary/70 group-hover:text-primary transition-colors flex-shrink-0" />
+                        <span className="font-sans font-semibold text-sm tracking-wide">{item.label}</span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+
+                {/* Collections section */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="mt-6 mb-2"
+                >
+                  <span className="font-sans text-[8px] uppercase tracking-[0.3em] text-zinc-500 font-bold px-0">Collections</span>
+                </motion.div>
+
+                {[
+                  { label: 'Oud & Arabic', href: '/category/oud-collection', delay: 0.22 },
+                  { label: 'Woody & Oriental', href: '/category/woody-oriental', delay: 0.27 },
+                  { label: 'Fresh & Floral', href: '/category/fresh-floral', delay: 0.32 },
+                  { label: 'Pour Homme', href: '/category/mens-perfumes', delay: 0.37 },
+                  { label: 'Pour Femme', href: '/category/womens-perfumes', delay: 0.42 },
+                  { label: 'View All →', href: '/categories', delay: 0.47, gold: true },
+                ].map((item) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -14 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: item.delay, type: 'spring', stiffness: 280, damping: 28 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center py-2.5 pl-3 border-b border-white/5 text-sm transition-all hover:pl-5 group ${
+                        item.gold ? 'text-primary font-bold' : 'text-white/55 hover:text-white/90 font-medium'
+                      }`}
+                    >
+                      {!item.gold && (
+                        <span className="w-1 h-1 rounded-full bg-primary/40 group-hover:bg-primary mr-3 flex-shrink-0 transition-colors" />
+                      )}
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
+
+                {/* Actions */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="mt-6 space-y-1"
+                >
+                  <Link
+                    href="/profile?tab=wishlist"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between py-3.5 border-b border-white/6 text-white/75 hover:text-white group transition-colors"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <Heart className="h-4 w-4 text-rose-400/70 group-hover:text-rose-400 transition-colors" />
+                      <span className="font-sans font-semibold text-sm tracking-wide">Wishlist</span>
+                    </div>
+                    {wishlistItemsCount > 0 && (
+                      <span className="h-5 min-w-5 rounded-full bg-rose-500 text-[9px] font-black text-white flex items-center justify-center px-1">
+                        {wishlistItemsCount}
+                      </span>
+                    )}
+                  </Link>
+
+                  <button
+                    onClick={() => { setIsMobileMenuOpen(false); setIsQuizOpen(true); }}
+                    className="w-full flex items-center gap-3.5 py-3.5 text-white/75 hover:text-primary group transition-colors"
+                  >
+                    <Sparkles className="h-4 w-4 text-primary/70 group-hover:text-primary transition-colors" />
+                    <span className="font-sans font-semibold text-sm tracking-wide">Fragrance Finder</span>
+                  </button>
+                </motion.div>
+              </div>
+
+              {/* Bottom: user card */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55 }}
+                className="border-t border-white/8 mx-5 pt-5 pb-8"
+              >
+                {isAuthenticated && user ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-full overflow-hidden border border-white/15 relative flex-shrink-0">
+                        <OptimizedImage src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100'} alt={user.firstName} fill />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-white truncate">{user.firstName} {user.lastName}</p>
+                        <p className="text-[10px] text-zinc-500 truncate">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => { setIsMobileMenuOpen(false); router.push('/profile'); }}
+                        className="text-[10px] font-bold uppercase tracking-widest text-white/80 h-8 border border-white/12 hover:border-white/25 hover:text-white rounded-lg transition-colors"
+                      >Account</button>
+                      <button
+                        onClick={() => { setIsMobileMenuOpen(false); useAuthStore.getState().logout(); toast.success('Signed out'); router.push('/'); }}
+                        className="text-[10px] font-bold uppercase tracking-widest text-rose-400/80 h-8 border border-rose-400/15 hover:border-rose-400/35 rounded-lg transition-colors"
+                      >Sign Out</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    <p className="text-[10px] text-zinc-500 leading-relaxed">Sign in to sync your wishlist and track orders.</p>
+                    <button
+                      onClick={() => { setIsMobileMenuOpen(false); router.push('/profile'); }}
+                      className="w-full h-9 bg-primary text-primary-foreground font-sans font-bold text-[9px] uppercase tracking-widest rounded-lg hover:bg-primary/90 transition-colors"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            </motion.div>
           </div>
-        </div>
-      </Sheet>
+        )}
+      </AnimatePresence>
 
       {/* Fragrance Finder Quiz Modal */}
       <FragranceQuizModal isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />

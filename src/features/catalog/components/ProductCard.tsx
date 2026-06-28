@@ -18,7 +18,7 @@ interface ProductCardProps {
   index?: number;
 }
 
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
+export const ProductCard = React.memo(function ProductCard({ product, index = 0 }: ProductCardProps) {
   const router = useRouter();
   const [selectedVariant, setSelectedVariant] = React.useState<ProductVariant | undefined>(
     product.variants?.[0]
@@ -359,4 +359,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       </Dialog>
     </>
   );
-}
+});
+
+ProductCard.displayName = 'ProductCard';

@@ -216,6 +216,12 @@
 /* Stagger-in animation for product cards */
 .card-animate {
   animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+/* Once animation completes, free the will-change hint */
+.card-animate:not([style*="animation-delay"]) {
+  will-change: auto;
 }
 
 /* Slide-up overlay reveal (used inside product card image on hover) */
