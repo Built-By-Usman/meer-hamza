@@ -43,7 +43,7 @@ const fadeInUp = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 
-    transition: { ease: [0.16, 1, 0.3, 1], duration: 0.65 }
+    transition: { ease: [0.16, 1, 0.3, 1], duration: 1.25 }
   }
 } as const;
 
@@ -52,8 +52,8 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.02
+      staggerChildren: 0.12,
+      delayChildren: 0.1
     }
   }
 } as const;
@@ -197,7 +197,7 @@ export function HomeClient() {
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
                       viewport={{ once: true }}
-                      transition={{ delay: idx * 0.04, duration: 0.45 }}
+                      transition={{ delay: idx * 0.08, duration: 0.9 }}
                       className="snap-start flex-shrink-0 w-[150px] sm:w-[200px]"
                     >
                       <Link
