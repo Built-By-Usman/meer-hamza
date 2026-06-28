@@ -142,12 +142,12 @@ export function CategoryClient({ slug }: CategoryClientProps) {
     <div className="space-y-8 text-left">
       {/* Brand list */}
       <div className="space-y-3">
-        <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">Brands</h4>
-        <div className="flex flex-col space-y-2">
+        <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary border-b pb-2">Brands</h4>
+        <div className="flex flex-col space-y-1.5">
           <button
             onClick={() => setSelectedBrand('all')}
             className={cn(
-              'text-sm text-left py-1 font-medium transition-colors hover:text-primary cursor-pointer',
+              'text-xs text-left py-1 font-light tracking-wide transition-colors hover:text-primary cursor-pointer',
               selectedBrand === 'all' ? 'text-primary font-bold' : 'text-muted-foreground'
             )}
           >
@@ -158,7 +158,7 @@ export function CategoryClient({ slug }: CategoryClientProps) {
               key={brand.id}
               onClick={() => setSelectedBrand(brand.name)}
               className={cn(
-                'text-sm text-left py-1 font-medium transition-colors hover:text-primary cursor-pointer',
+                'text-xs text-left py-1 font-light tracking-wide transition-colors hover:text-primary cursor-pointer',
                 selectedBrand === brand.name ? 'text-primary font-bold' : 'text-muted-foreground'
               )}
             >
@@ -169,32 +169,34 @@ export function CategoryClient({ slug }: CategoryClientProps) {
       </div>
 
       {/* Dual handle price slider */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">Price Limit</h4>
-          <span className="text-xs font-semibold px-2 py-0.5 border rounded-md bg-secondary/30">
+      <div className="space-y-3">
+        <div className="flex justify-between items-center border-b pb-2">
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary">Price Limit</h4>
+          <span className="text-[10px] font-sans font-semibold px-2 py-0.5 border rounded-none bg-secondary/35 text-foreground">
             ${priceRange[0]} - ${priceRange[1]}
           </span>
         </div>
-        <Slider
-          min={0}
-          max={11000}
-          step={50}
-          value={priceRange}
-          onChange={(val) => setPriceRange(val)}
-        />
+        <div className="pt-2">
+          <Slider
+            min={0}
+            max={11000}
+            step={50}
+            value={priceRange}
+            onChange={(val) => setPriceRange(val)}
+          />
+        </div>
       </div>
 
       {/* Ratings */}
       <div className="space-y-3">
-        <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">Minimum Rating</h4>
-        <div className="flex flex-col space-y-2">
+        <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary border-b pb-2">Minimum Rating</h4>
+        <div className="flex flex-col space-y-2.5">
           {[5, 4, 3].map((star) => (
             <button
               key={star}
               onClick={() => setSelectedRating(selectedRating === star ? null : star)}
               className={cn(
-                'flex items-center space-x-2 text-sm text-left py-1 transition-colors hover:text-primary cursor-pointer',
+                'flex items-center space-x-2 text-xs text-left py-0.5 transition-colors hover:text-primary cursor-pointer',
                 selectedRating === star ? 'text-primary font-bold' : 'text-muted-foreground'
               )}
             >
@@ -204,12 +206,12 @@ export function CategoryClient({ slug }: CategoryClientProps) {
                     key={i}
                     className={cn(
                       'h-3.5 w-3.5',
-                      i < star ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'
+                      i < star ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/20'
                     )}
                   />
                 ))}
               </div>
-              <span className="text-xs">& Up</span>
+              <span className="text-[10px] font-sans font-light">& Up</span>
             </button>
           ))}
         </div>
@@ -217,14 +219,14 @@ export function CategoryClient({ slug }: CategoryClientProps) {
 
       {/* Stock availability */}
       <div className="space-y-3">
-        <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">Availability</h4>
-        <div className="flex flex-col space-y-2">
+        <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary border-b pb-2">Availability</h4>
+        <div className="flex flex-col space-y-1.5">
           {['all', 'in_stock', 'out_of_stock'].map((status) => (
             <button
               key={status}
               onClick={() => setSelectedStock(status)}
               className={cn(
-                'text-sm text-left py-1 capitalize font-medium transition-colors hover:text-primary cursor-pointer',
+                'text-xs text-left py-1 capitalize font-light tracking-wide transition-colors hover:text-primary cursor-pointer',
                 selectedStock === status ? 'text-primary font-bold' : 'text-muted-foreground'
               )}
             >
@@ -237,31 +239,55 @@ export function CategoryClient({ slug }: CategoryClientProps) {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background font-sans">
       <Header />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Category Header */}
-        <div className="text-left border-b pb-6 mb-8">
-          <div className="text-xs text-muted-foreground mb-1.5 flex items-center space-x-1.5">
-            <Link href="/" className="hover:underline">Home</Link>
+      {/* Category Cinematic Hero Banner */}
+      <div className="relative w-full h-[180px] sm:h-[240px] bg-zinc-950 flex items-center overflow-hidden">
+        {activeCategory?.image ? (
+          <OptimizedImage
+            src={activeCategory.image}
+            alt={title}
+            fill
+            priority
+            className="object-cover opacity-35 transition-transform duration-1000 ease-out hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-tr from-amber-950 via-zinc-900 to-stone-900" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        
+        <div className="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 text-left text-white space-y-2.5">
+          <div className="text-[9px] text-zinc-300 font-sans tracking-widest uppercase flex items-center space-x-1.5">
+            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <span>/</span>
-            <span className="font-semibold text-foreground">{title}</span>
+            <span className="text-primary font-medium">{title}</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{title}</h1>
-          {activeCategory?.description && (
-            <p className="text-sm text-muted-foreground mt-2 max-w-2xl leading-relaxed">{activeCategory.description}</p>
+          <h1 className="text-3xl sm:text-4.5xl font-serif tracking-wider font-light text-white uppercase drop-shadow-md">
+            {title}
+          </h1>
+          {activeCategory?.description ? (
+            <p className="text-xs sm:text-sm text-zinc-300 font-sans font-light max-w-2xl leading-relaxed mt-1 drop-shadow-xs">
+              {activeCategory.description}
+            </p>
+          ) : (
+            <p className="text-xs sm:text-sm text-zinc-300 font-sans font-light max-w-2xl leading-relaxed mt-1 drop-shadow-xs">
+              Indulge in our exquisite collection of premium formulations crafted for the discerning fragrance connoisseur.
+            </p>
           )}
         </div>
+      </div>
 
+      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex gap-8">
           {/* A. Desktop Sidebar filters */}
-          <aside className="hidden lg:block w-64 flex-shrink-0 border-r pr-6 self-start sticky top-24">
+          <aside className="hidden lg:block w-64 flex-shrink-0 border-r border-border/40 pr-6 self-start sticky top-24">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-base">Filter Products</h3>
+              <h3 className="font-serif italic text-lg font-light tracking-wide text-foreground">Filter Catalog</h3>
               <button
                 onClick={handleClearFilters}
-                className="text-xs text-muted-foreground hover:text-primary hover:underline cursor-pointer"
+                className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground hover:text-primary transition-colors cursor-pointer"
               >
                 Clear All
               </button>
@@ -272,8 +298,8 @@ export function CategoryClient({ slug }: CategoryClientProps) {
           {/* B. Products Catalog Section */}
           <div className="flex-grow space-y-6">
             {/* Control Bar: Sorting & Display modes */}
-            <div className="flex flex-wrap items-center justify-between gap-4 border bg-secondary/15 rounded-lg p-3">
-              <div className="text-sm text-muted-foreground font-semibold">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/40 pb-4">
+              <div className="text-xs text-muted-foreground font-sans tracking-wide uppercase font-semibold">
                 {isLoadingProducts ? (
                   <span>Searching products...</span>
                 ) : (
@@ -287,10 +313,10 @@ export function CategoryClient({ slug }: CategoryClientProps) {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsMobileFiltersOpen(true)}
-                  className="lg:hidden flex items-center space-x-1 h-8 rounded-md border-input cursor-pointer"
+                  className="lg:hidden flex items-center space-x-1 h-8 rounded-none border-border/60 hover:bg-secondary cursor-pointer"
                 >
                   <SlidersHorizontal className="h-3.5 w-3.5" />
-                  <span>Filters</span>
+                  <span className="text-[10px] uppercase tracking-wider font-bold">Filters</span>
                 </Button>
 
                 {/* Sorting Select */}
@@ -299,7 +325,7 @@ export function CategoryClient({ slug }: CategoryClientProps) {
                   <Select
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
-                    className="w-[140px] sm:w-[170px] h-8 text-xs py-0.5 rounded-md"
+                    className="w-[140px] sm:w-[170px] h-8 text-[10px] uppercase tracking-wider py-0.5 rounded-none"
                   >
                     <option value="featured">Sort: Featured</option>
                     <option value="price_asc">Price: Low to High</option>
@@ -310,11 +336,11 @@ export function CategoryClient({ slug }: CategoryClientProps) {
                 </div>
 
                 {/* Display Grid/List switcher */}
-                <div className="hidden sm:flex border rounded-md p-0.5 bg-background">
+                <div className="hidden sm:flex border border-border/40 rounded-none p-0.5 bg-background">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={cn(
-                      'p-1 rounded-sm cursor-pointer transition-colors',
+                      'p-1 rounded-none cursor-pointer transition-colors',
                       viewMode === 'grid' ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'
                     )}
                     aria-label="Grid View"
@@ -324,7 +350,7 @@ export function CategoryClient({ slug }: CategoryClientProps) {
                   <button
                     onClick={() => setViewMode('list')}
                     className={cn(
-                      'p-1 rounded-sm cursor-pointer transition-colors',
+                      'p-1 rounded-none cursor-pointer transition-colors',
                       viewMode === 'list' ? 'bg-secondary text-primary' : 'text-muted-foreground hover:text-foreground'
                     )}
                     aria-label="List View"
@@ -337,35 +363,35 @@ export function CategoryClient({ slug }: CategoryClientProps) {
 
             {/* Active Filters Row */}
             {(selectedBrand !== 'all' || selectedRating !== null || selectedStock !== 'all' || priceRange[0] > 0 || priceRange[1] < 11000) && (
-              <div className="flex flex-wrap items-center gap-1.5 border border-dashed rounded-lg p-2.5 bg-card/10">
-                <span className="text-[11px] font-bold text-muted-foreground uppercase mr-1">Active Filters:</span>
+              <div className="flex flex-wrap items-center gap-2 border border-dashed border-border/60 p-3 bg-secondary/5">
+                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mr-1">Active Filters:</span>
                 {selectedBrand !== 'all' && (
-                  <Badge variant="secondary" className="text-[10px] py-0.5 flex items-center gap-1 h-5">
+                  <Badge variant="secondary" className="text-[9px] py-1 px-2.5 rounded-none flex items-center gap-1.5 h-6 bg-background border border-border/40 hover:bg-secondary">
                     <span>{selectedBrand}</span>
-                    <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedBrand('all')} />
+                    <X className="h-3 w-3 cursor-pointer text-muted-foreground hover:text-destructive transition-colors" onClick={() => setSelectedBrand('all')} />
                   </Badge>
                 )}
                 {selectedRating !== null && (
-                  <Badge variant="secondary" className="text-[10px] py-0.5 flex items-center gap-1 h-5">
+                  <Badge variant="secondary" className="text-[9px] py-1 px-2.5 rounded-none flex items-center gap-1.5 h-6 bg-background border border-border/40 hover:bg-secondary">
                     <span>{selectedRating}+ Stars</span>
-                    <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedRating(null)} />
+                    <X className="h-3 w-3 cursor-pointer text-muted-foreground hover:text-destructive transition-colors" onClick={() => setSelectedRating(null)} />
                   </Badge>
                 )}
                 {selectedStock !== 'all' && (
-                  <Badge variant="secondary" className="text-[10px] py-0.5 flex items-center gap-1 h-5">
+                  <Badge variant="secondary" className="text-[9px] py-1 px-2.5 rounded-none flex items-center gap-1.5 h-6 bg-background border border-border/40 hover:bg-secondary">
                     <span>{selectedStock.replace('_', ' ')}</span>
-                    <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedStock('all')} />
+                    <X className="h-3 w-3 cursor-pointer text-muted-foreground hover:text-destructive transition-colors" onClick={() => setSelectedStock('all')} />
                   </Badge>
                 )}
                 {(priceRange[0] > 0 || priceRange[1] < 11000) && (
-                  <Badge variant="secondary" className="text-[10px] py-0.5 flex items-center gap-1 h-5">
+                  <Badge variant="secondary" className="text-[9px] py-1 px-2.5 rounded-none flex items-center gap-1.5 h-6 bg-background border border-border/40 hover:bg-secondary">
                     <span>${priceRange[0]}-${priceRange[1]}</span>
-                    <X className="h-3 w-3 cursor-pointer" onClick={() => setPriceRange([0, 11000])} />
+                    <X className="h-3 w-3 cursor-pointer text-muted-foreground hover:text-destructive transition-colors" onClick={() => setPriceRange([0, 11000])} />
                   </Badge>
                 )}
                 <button
                   onClick={handleClearFilters}
-                  className="text-[11px] font-bold text-destructive hover:underline ml-auto cursor-pointer"
+                  className="text-[10px] font-bold tracking-wider text-destructive hover:underline ml-auto cursor-pointer uppercase"
                 >
                   Clear All
                 </button>

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Menu, Search, Heart, ShoppingBag, X, ChevronDown, Compass, Award, Percent, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -37,6 +38,16 @@ export function Header() {
   const wishlistItemsCount = useWishlistStore((state) => state.items.length);
   const { isAuthenticated, user } = useAuthStore();
 
+  // Retrigger cart bounce animation every time count increases
+  const [cartBounceKey, setCartBounceKey] = React.useState(0);
+  const prevCartCount = React.useRef(cartItemsCount);
+  React.useEffect(() => {
+    if (cartItemsCount > prevCartCount.current) {
+      setCartBounceKey((k) => k + 1);
+    }
+    prevCartCount.current = cartItemsCount;
+  }, [cartItemsCount]);
+
   // Listen to custom window events triggered by MobileBottomNav
   React.useEffect(() => {
     const handleToggleCart = () => setIsCartOpen((prev) => !prev);
@@ -67,7 +78,7 @@ export function Header() {
 
   return (
     <>
-      <header className="w-full z-40 relative">
+      <header className="w-full sticky top-0 z-40">
         {/* 1. Announcement Bar */}
         <div className="w-full h-8 bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center overflow-hidden px-4">
           <AnimatePresence mode="wait">
@@ -90,7 +101,7 @@ export function Header() {
         </div>
 
         {/* 2. Main Sticky Navigation Header */}
-        <div className="w-full bg-background/80 backdrop-blur-md border-b sticky top-0 z-30 transition-all duration-300">
+        <div className="w-full bg-background/95 backdrop-blur-md border-b transition-all duration-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             {/* Left: Hamburg menu (mobile) & Brand Logo */}
             <div className="flex items-center space-x-4">
@@ -104,7 +115,16 @@ export function Header() {
                 <Menu className="h-5 w-5" />
               </Button>
 
-              <Link href="/" className="flex items-center space-x-2">
+              <Link href="/" className="flex items-center space-x-2.5">
+                <div className="h-8 w-8 rounded-full border border-border/40 bg-zinc-950 flex items-center justify-center overflow-hidden">
+                  <Image
+                    src="/logo.png"
+                    alt="Meer Hamza Logo"
+                    width={22}
+                    height={22}
+                    className="object-contain"
+                  />
+                </div>
                 <span className="font-extrabold text-xl tracking-widest bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent font-serif italic">
                   MEER HAMZA
                 </span>
@@ -246,10 +266,7 @@ export function Header() {
                 <Search className="h-4 w-4" />
               </Button>
 
-              {/* Theme Toggle (Hidden on Mobile, moved to drawer) */}
-              <div className="hidden sm:inline-flex">
-                <ThemeToggle />
-              </div>
+              {/* Theme Toggle removed for light theme force */}
 
               {/* Wishlist count link (Hidden on Mobile, moved to drawer) */}
               <Link href="/profile?tab=wishlist" className="hidden sm:inline-flex" aria-label="Wishlist">
@@ -271,9 +288,11 @@ export function Header() {
                 className="h-9 w-9 rounded-full relative cursor-pointer hover:bg-secondary"
                 aria-label="Cart"
               >
-                <ShoppingBag className="h-4 w-4" />
+                <span key={cartBounceKey} className={cartBounceKey > 0 ? 'cart-bounce' : ''}>
+                  <ShoppingBag className="h-4 w-4" />
+                </span>
                 {cartItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-rose-500 text-[8px] font-bold text-white flex items-center justify-center scale-100 transition-all duration-300">
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-rose-500 text-[8px] font-bold text-white flex items-center justify-center transition-all duration-300">
                     {cartItemsCount}
                   </span>
                 )}
@@ -297,6 +316,17 @@ export function Header() {
                   )}
                 </Link>
               </div>
+            </div>
+          </div>
+
+          {/* Mobile Search Bar Row */}
+          <div className="md:hidden w-full px-4 pb-3 pt-1 bg-background">
+            <div
+              onClick={() => setIsSearchOpen(true)}
+              className="w-full h-10 flex items-center space-x-2 px-4 bg-secondary/80 hover:bg-secondary/95 border border-border/40 rounded-full cursor-pointer transition-colors shadow-xs"
+            >
+              <Search className="h-4 w-4 text-muted-foreground stroke-[1.5]" />
+              <span className="text-xs text-muted-foreground font-light tracking-wide">Search perfumes...</span>
             </div>
           </div>
         </div>
@@ -422,11 +452,7 @@ export function Header() {
               </div>
             )}
 
-            {/* Mobile Theme Toggle Selection Grid */}
-            <div className="flex items-center justify-between border-t pt-3 text-xs text-muted-foreground">
-              <span>Theme Preference:</span>
-              <ThemeToggle />
-            </div>
+            {/* Theme Toggle removed for light theme force */}
           </div>
         </div>
       </Sheet>
