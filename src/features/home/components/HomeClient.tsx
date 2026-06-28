@@ -9,7 +9,8 @@ import { Header } from '@/features/shared/components/Header';
 import { Footer } from '@/features/shared/components/Footer';
 import { Loader } from '@/components/common/Loader';
 import { ProductCard } from '@/features/catalog/components/ProductCard';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/utils/cn';
 import {
   useFeaturedProducts,
   useCategories,
@@ -58,10 +59,51 @@ const staggerContainer = {
   }
 } as const;
 
+const HERO_SLIDES = [
+  {
+    id: 1,
+    tagline: 'Exclusive Reserve · Est. 2019',
+    title: 'The Essence of Excellence',
+    description: 'Discover a world of unparalleled luxury and sensory indulgence, curated for the discerning connoisseur.',
+    image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1800&auto=format&fit=crop',
+    link: '/categories',
+    btnText: 'Explore Collections',
+  },
+  {
+    id: 2,
+    tagline: 'Maison Special · Limited Edition',
+    title: 'Midnight Seduction Scent',
+    description: 'A dark, sensual fusion of warm spices, sultry black orchid, and toasted coffee beans.',
+    image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1800&auto=format&fit=crop',
+    link: '/product/midnight-essence',
+    btnText: 'Discover Midnight',
+  },
+  {
+    id: 3,
+    tagline: 'Private Blend · New Launch',
+    title: 'Royal Oud Masterpiece',
+    description: 'Sourced from the heart of Cambodia, our pure oud oil is layered with Bulgarian rose petals.',
+    image: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?q=80&w=1800&auto=format&fit=crop',
+    link: '/product/royal-oud',
+    btnText: 'Experience Oud',
+  },
+];
+
 export function HomeClient() {
   const { data: featured, isLoading: isLoadingFeatured } = useFeaturedProducts();
   const { data: categories, isLoading: isLoadingCategories } = useCategories();
   const [email, setEmail] = React.useState('');
+  const [activeSlide, setActiveSlide] = React.useState(0);
+
+  // Auto-play slides every 6.5 seconds
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 6500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const currentHero = HERO_SLIDES[activeSlide];
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
@@ -70,72 +112,115 @@ export function HomeClient() {
       <main className="flex-1 bg-background pb-16 overflow-hidden">
 
         {/* ═══════════════════════════════════════════════
-            1. CINEMATIC HERO
+            1. CINEMATIC HERO SLIDER
         ═══════════════════════════════════════════════ */}
-        <section className="relative w-full h-[55vw] min-h-[340px] max-h-[620px] bg-zinc-950 overflow-hidden">
-          {/* Background image with continuous zoom */}
-          <motion.div 
-            initial={{ scale: 1.08, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.7 }}
-            transition={{ duration: 5.5, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 w-full h-full"
-          >
-            <OptimizedImage
-              src="https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1800&auto=format&fit=crop"
-              alt="Maison de Luxe Masterpieces"
-              fill
-              priority
-              loading="eager"
-              className="object-cover"
-            />
-          </motion.div>
-
-          {/* Gradient overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-
-          {/* Hero text — staggered animation */}
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="absolute inset-0 flex flex-col justify-center px-6 sm:px-12 lg:px-20 text-white"
-          >
-            <motion.span
-              variants={fadeInUp}
-              className="block font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.35em] text-primary mb-3"
-            >
-              Exclusive Reserve · Est. 2019
-            </motion.span>
-
-            <motion.h1
-              variants={fadeInUp}
-              className="font-serif text-3xl sm:text-5xl lg:text-6xl font-light tracking-wider text-white leading-[1.1] max-w-lg"
-            >
-              The Essence<br />of Excellence
-            </motion.h1>
-
-            <motion.p
-              variants={fadeInUp}
-              className="mt-4 font-sans text-[10px] sm:text-xs text-zinc-300 font-light tracking-wide max-w-xs sm:max-w-sm leading-relaxed hidden sm:block"
-            >
-              Discover a world of unparalleled luxury and sensory indulgence, curated for the discerning connoisseur.
-            </motion.p>
-
+        <section className="relative w-full h-[55vw] min-h-[360px] max-h-[620px] bg-zinc-950 overflow-hidden group/hero">
+          
+          <AnimatePresence mode="wait">
             <motion.div
-              variants={fadeInUp}
-              className="mt-6 sm:mt-8 flex items-center gap-4"
+              key={activeSlide}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: 'easeInOut' }}
+              className="absolute inset-0 w-full h-full"
             >
-              <Link href="/categories">
-                <button className="btn-shimmer font-sans text-[9px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-6 sm:px-8 h-9 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg">
-                  Explore Collections <ArrowRight className="h-3 w-3" />
-                </button>
-              </Link>
-              <Link href="/categories" className="font-sans text-[9px] uppercase tracking-[0.18em] text-zinc-300 hover:text-white transition-colors border-b border-zinc-400/40 pb-0.5 hover:border-white/60">
-                View All
-              </Link>
+              {/* Background image with continuous Ken Burns zoom */}
+              <motion.div 
+                initial={{ scale: 1.08 }}
+                animate={{ scale: 1.01 }}
+                transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-0 w-full h-full"
+              >
+                <OptimizedImage
+                  src={currentHero.image}
+                  alt={currentHero.title}
+                  fill
+                  priority
+                  loading="eager"
+                  className="object-cover opacity-70"
+                />
+              </motion.div>
+
+              {/* Gradient overlays */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-transparent" />
+
+              {/* Hero text content */}
+              <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-12 lg:px-20 text-white">
+                <motion.span
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="block font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.35em] text-primary mb-3 font-semibold"
+                >
+                  {currentHero.tagline}
+                </motion.span>
+
+                <motion.h1
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-serif text-3xl sm:text-5xl lg:text-6xl font-light tracking-wider text-white leading-[1.1] max-w-lg"
+                >
+                  {currentHero.title}
+                </motion.h1>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                  className="mt-4 font-sans text-[10px] sm:text-xs text-zinc-300 font-light tracking-wide max-w-xs sm:max-w-sm leading-relaxed hidden sm:block"
+                >
+                  {currentHero.description}
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="mt-6 sm:mt-8 flex items-center gap-4"
+                >
+                  <Link href={currentHero.link}>
+                    <button className="btn-shimmer font-sans text-[9px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-6 sm:px-8 h-9 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg">
+                      {currentHero.btnText} <ArrowRight className="h-3 w-3" />
+                    </button>
+                  </Link>
+                </motion.div>
+              </div>
             </motion.div>
-          </motion.div>
+          </AnimatePresence>
+
+          {/* Navigation Dot Indicators */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
+            {HERO_SLIDES.map((slide, i) => (
+              <button
+                key={slide.id}
+                onClick={() => setActiveSlide(i)}
+                className={cn(
+                  'h-1.5 rounded-full transition-all duration-300 cursor-pointer',
+                  activeSlide === i ? 'w-6 bg-primary' : 'w-1.5 bg-white/40 hover:bg-white/60'
+                )}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Left/Right controls (Shown on hover) */}
+          <button
+            onClick={() => setActiveSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover/hero:opacity-100 hidden sm:flex z-20"
+            aria-label="Previous slide"
+          >
+            ←
+          </button>
+          <button
+            onClick={() => setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover/hero:opacity-100 hidden sm:flex z-20"
+            aria-label="Next slide"
+          >
+            →
+          </button>
 
           {/* Thin gold line at bottom */}
           <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
