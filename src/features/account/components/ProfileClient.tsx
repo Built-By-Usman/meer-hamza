@@ -57,87 +57,28 @@ export function ProfileClient() {
     toast.success(`Moved ${product.name} to Shopping Cart`);
   };
 
-  if (activeTab === 'wishlist') {
-    return (
-      <div className="min-h-screen flex flex-col bg-background font-sans">
-        <Header />
-        <main className="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 text-left">
-          {/* Wishlist Header */}
-          <div className="border-b border-border/40 pb-6 mb-10">
-            <h1 className="text-3xl font-serif tracking-wider font-light flex items-center gap-3">
-              <Heart className="h-7 w-7 text-primary stroke-[1.25] fill-primary/5" /> My Wishlist
-            </h1>
-            <p className="text-xs text-muted-foreground font-sans font-light mt-2">
-              Review and manage your saved premium fragrances.
-            </p>
-          </div>
-
-          {/* Wishlist Grid */}
-          {wishlistItems.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-              {wishlistItems.map((prod) => (
-                <Card key={prod.id} className="group rounded-none border overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between p-4 text-left">
-                  <div className="space-y-3">
-                    <div className="relative aspect-square w-full bg-secondary overflow-hidden rounded-none border border-border/10">
-                      <OptimizedImage src={prod.images[0]} alt={prod.name} fill className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-sans font-semibold tracking-wider text-muted-foreground uppercase">{prod.brand}</span>
-                      <h4 className="font-serif text-sm sm:text-base text-foreground tracking-wide font-medium mt-1 truncate group-hover:text-primary transition-colors">{prod.name}</h4>
-                      <div className="flex items-center space-x-1.5 mt-1">
-                        <Rating rating={prod.rating} size={11} />
-                        <span className="text-[10px] text-muted-foreground">({prod.reviewsCount})</span>
-                      </div>
-                      <p className="text-primary font-bold text-xs sm:text-sm mt-1.5 font-sans">${prod.basePrice}</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 mt-4">
-                    <Button variant="outline" size="sm" onClick={() => removeFromWishlist(prod.id)} className="text-[10px] sm:text-xs py-1 h-8 rounded-none cursor-pointer">
-                      Remove
-                    </Button>
-                    <Button size="sm" onClick={() => handleMoveToCart(prod)} className="text-[10px] sm:text-xs py-1 h-8 rounded-none cursor-pointer">
-                      Add to Cart
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              title="Your Wishlist is empty"
-              description="Save products to your wishlist while browsing, and they will appear here for easy access later."
-              actionLabel="Discover Products"
-              onAction={() => router.push('/categories')}
-            />
-          )}
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   // Account Dashboard / Profile View
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
       <Header />
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 text-left">
+      <main className="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 text-left">
         {/* Profile Header */}
-        <div className="flex justify-between items-center border-b border-border/40 pb-6 mb-10">
+        <div className="flex justify-between items-center border-b border-border/25 pb-5 mb-8">
           <div>
-            <h1 className="text-3xl font-serif tracking-wider font-light flex items-center gap-3">
-              <UserIcon className="h-7 w-7 text-primary stroke-[1.25]" /> My Account
+            <h1 className="text-2xl sm:text-3xl font-serif tracking-wider font-light flex items-center gap-3">
+              <UserIcon className="h-6 w-6 sm:h-7 sm:w-7 text-primary stroke-[1.25]" /> My Account
             </h1>
-            <p className="text-xs text-muted-foreground font-sans font-light mt-2">
+            <p className="text-[10px] text-muted-foreground font-sans font-light mt-1">
               {isAuthenticated && user ? `Welcome back, ${user.firstName}` : 'Access order tracking and settings.'}
             </p>
           </div>
           <div>
             {isAuthenticated ? (
-              <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-none cursor-pointer text-xs font-semibold gap-1.5 border-border/60 hover:bg-secondary">
+              <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-xl cursor-pointer text-xs font-semibold gap-1.5 border-border hover:bg-secondary">
                 <LogOut className="h-3.5 w-3.5" /> Sign Out
               </Button>
             ) : (
-              <Button size="sm" onClick={() => setIsAuthModalOpen(true)} className="rounded-none cursor-pointer text-xs font-semibold">
+              <Button size="sm" onClick={() => setIsAuthModalOpen(true)} className="rounded-xl cursor-pointer text-xs font-semibold">
                 Sign In
               </Button>
             )}
@@ -147,15 +88,12 @@ export function ProfileClient() {
         {/* Dashboard Tabs Grid */}
         <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Navigation Sidebar List - Responsive layout */}
-          <TabsList className="flex flex-row md:flex-col h-auto bg-secondary/15 border rounded-xl p-1.5 space-x-1 md:space-x-0 md:space-y-1 w-full md:col-span-1 border-border/40 self-start overflow-x-auto no-scrollbar">
+          <TabsList className="flex flex-row md:flex-col h-auto bg-secondary/10 border rounded-xl p-1.5 space-x-1 md:space-x-0 md:space-y-1 w-full md:col-span-1 border-border/30 self-start overflow-x-auto no-scrollbar">
             <TabsTrigger value="dashboard" className="flex-1 md:w-full justify-center md:justify-start font-semibold text-[10px] sm:text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 sm:gap-2">
               <LayoutDashboard className="h-3.5 w-3.5" /> <span className="hidden sm:inline md:inline">Dashboard</span><span className="sm:hidden md:hidden">Profile</span>
             </TabsTrigger>
             <TabsTrigger value="orders" className="flex-1 md:w-full justify-center md:justify-start font-semibold text-[10px] sm:text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 sm:gap-2">
               <ShoppingBag className="h-3.5 w-3.5" /> <span className="hidden sm:inline md:inline">Order History</span><span className="sm:hidden md:hidden">Orders</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex-1 md:w-full justify-center md:justify-start font-semibold text-[10px] sm:text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 sm:gap-2">
-              <Settings className="h-3.5 w-3.5" /> <span className="hidden sm:inline md:inline">Settings</span><span className="sm:hidden md:hidden">Config</span>
             </TabsTrigger>
           </TabsList>
 
@@ -222,6 +160,8 @@ export function ProfileClient() {
                 </Card>
               )}
             </TabsContent>
+
+
 
             {/* T2: ORDERS HISTORY LOGS */}
             <TabsContent value="orders">
@@ -301,50 +241,12 @@ export function ProfileClient() {
                   title="No orders found"
                   description="You have not placed any orders yet. Once you complete a purchase, your receipt invoices will tracking details will appear here."
                   actionLabel="Go Shop Catalog"
-                  onAction={() => router.push('/category/all')}
+                  onAction={() => router.push('/')}
                 />
               )}
             </TabsContent>
 
-            {/* T3: ACCOUNT SETTINGS (LOCALIZATION i18n & PWAs) */}
-            <TabsContent value="settings">
-              <Card className="rounded-xl border text-left">
-                <CardContent className="p-6 space-y-6">
-                  <h3 className="font-bold text-lg border-b pb-3 flex items-center gap-1.5"><Settings className="h-5 w-5 text-muted-foreground" /> Account Configurations</h3>
 
-                  {/* i18n Currency / Language scaffold */}
-                  <div className="space-y-4">
-                    <h4 className="font-semibold text-sm">Localization Preference</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="text-xs text-muted-foreground font-semibold">Display Currency</label>
-                        <Select defaultValue="usd">
-                          <option value="usd">USD ($) - United States Dollar</option>
-                          <option value="eur">EUR (€) - Euro Zone</option>
-                          <option value="gbp">GBP (£) - British Pound</option>
-                        </Select>
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-xs text-muted-foreground font-semibold">Display Language</label>
-                        <Select defaultValue="en">
-                          <option value="en">English (US)</option>
-                          <option value="fr">Français (French)</option>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Communication Preferences */}
-                  <div className="space-y-4 border-t pt-4">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Communication Preferences</h4>
-                    <label className="flex items-center space-x-3 text-sm cursor-pointer">
-                      <input type="checkbox" defaultChecked className="h-4 w-4 rounded border-gray-300" onChange={(e) => toast.info(`Newsletter alerts: ${e.target.checked ? 'Enabled' : 'Disabled'}`)} />
-                      <span>Receive email notifications for order status, tracking updates, and delivery confirmations.</span>
-                    </label>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
           </div>
         </Tabs>
       </main>

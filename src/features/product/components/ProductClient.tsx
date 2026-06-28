@@ -53,12 +53,19 @@ export function ProductClient({ slug }: ProductClientProps) {
 
   // Stores
   const addToCart = useCartStore((s) => s.addToCart);
+  const cartItems = useCartStore((s) => s.items);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
   const { toggleWishlist, isInWishlist } = useWishlistStore();
   const { isAuthenticated, user } = useAuthStore();
   
   // Mutations
   const addReviewMutation = useAddReview(product?.id || '');
   const isFav = product ? isInWishlist(product.id) : false;
+
+  const currentCartItem = product ? cartItems.find(
+    (item) => item.productId === product.id && item.variantId === selectedVariant?.id
+  ) : null;
+  const quantityInCart = currentCartItem ? currentCartItem.quantity : 0;
 
   // Sync selected variant when product loads
   React.useEffect(() => {
@@ -190,7 +197,7 @@ export function ProductClient({ slug }: ProductClientProps) {
         <div className="text-left text-[9px] tracking-[0.2em] uppercase text-muted-foreground mb-6 flex items-center space-x-2 font-sans font-medium">
           <Link href="/" className="hover:text-foreground transition-colors">Maison</Link>
           <ChevronRight className="h-2.5 w-2.5" />
-          <Link href="/categories" className="hover:text-foreground transition-colors">Collections</Link>
+          <Link href="/#catalog-section" className="hover:text-foreground transition-colors">Catalog</Link>
           <ChevronRight className="h-2.5 w-2.5" />
           <span className="text-foreground italic font-serif lowercase">{product.name}</span>
         </div>
@@ -223,13 +230,17 @@ export function ProductClient({ slug }: ProductClientProps) {
               className="flex-1 relative aspect-[3/4] w-full bg-[#f5f3ef] border border-border/20 rounded-2xl overflow-hidden cursor-crosshair group shadow-xs hover:shadow-sm transition-all duration-300"
             >
               {activeImage ? (
-                <img
+                <OptimizedImage
                   src={activeImage}
                   alt={product.name}
-                  className="zoom-target w-full h-full object-cover transition-transform duration-100 ease-out"
+                  fill
+                  priority={true}
+                  className="zoom-target transition-transform duration-100 ease-out"
+                  containerClassName="w-full h-full rounded-2xl bg-transparent"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               ) : (
-                <div className="w-full h-full bg-[#f5f3ef] animate-pulse" />
+                <div className="w-full h-full bg-[#f5f3ef] animate-pulse rounded-2xl" />
               )}
             </div>
           </div>
@@ -301,34 +312,65 @@ export function ProductClient({ slug }: ProductClientProps) {
                 {/* Quantity */}
                 <div className="flex items-center border rounded-xl h-11 bg-background border-border overflow-hidden">
                   <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    onClick={() => {
+                      if (quantityInCart > 0) {
+                        updateQuantity(product.id, quantityInCart - 1, selectedVariant?.id);
+                        toast.success('Updated cart', {
+                          description: `Decreased quantity to ${quantityInCart - 1}`,
+                          duration: 1500,
+                        });
+                      } else {
+                        setQuantity((q) => Math.max(1, q - 1));
+                      }
+                    }}
                     className="px-3 h-full hover:bg-secondary flex items-center justify-center cursor-pointer transition-colors"
                   >
                     -
                   </button>
-                  <span className="px-3 text-xs font-bold w-10 text-center select-none font-sans">{quantity}</span>
+                  <span className="px-3 text-xs font-bold w-10 text-center select-none font-sans">
+                    {quantityInCart > 0 ? quantityInCart : quantity}
+                  </span>
                   <button
-                    onClick={() => setQuantity((q) => q + 1)}
+                    onClick={() => {
+                      if (quantityInCart > 0) {
+                        updateQuantity(product.id, quantityInCart + 1, selectedVariant?.id);
+                        toast.success('Updated cart', {
+                          description: `Increased quantity to ${quantityInCart + 1}`,
+                          duration: 1500,
+                        });
+                      } else {
+                        setQuantity((q) => q + 1);
+                      }
+                    }}
                     className="px-3 h-full hover:bg-secondary flex items-center justify-center cursor-pointer transition-colors"
                   >
                     +
                   </button>
                 </div>
 
-                <Button
-                  onClick={handleAddToCart}
-                  className="btn-shimmer flex-1 h-11 font-bold rounded-xl uppercase text-[10px] tracking-widest cursor-pointer flex items-center justify-center gap-2 bg-zinc-950 text-white hover:bg-zinc-800"
-                >
-                  {isAdding ? (
-                    <>
-                      <Check className="h-4 w-4 text-emerald-500" /> Added!
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag className="h-4 w-4" /> Add to Bag
-                    </>
-                  )}
-                </Button>
+                {quantityInCart > 0 ? (
+                  <Button
+                    onClick={() => window.dispatchEvent(new CustomEvent('toggle-cart-drawer'))}
+                    className="btn-shimmer flex-1 h-11 font-bold rounded-xl uppercase text-[10px] tracking-widest cursor-pointer flex items-center justify-center gap-2 bg-emerald-700 text-white hover:bg-emerald-800 border-none"
+                  >
+                    <Check className="h-4 w-4" /> Added (Open Bag)
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleAddToCart}
+                    className="btn-shimmer flex-1 h-11 font-bold rounded-xl uppercase text-[10px] tracking-widest cursor-pointer flex items-center justify-center gap-2 bg-zinc-950 text-white hover:bg-zinc-800"
+                  >
+                    {isAdding ? (
+                      <>
+                        <Check className="h-4 w-4 text-emerald-500" /> Added!
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag className="h-4 w-4" /> Add to Bag
+                      </>
+                    )}
+                  </Button>
+                )}
 
                 <Button
                   variant="outline"
@@ -492,10 +534,21 @@ export function ProductClient({ slug }: ProductClientProps) {
               <div className="flex items-center space-x-3.5">
                 <span className="text-xs font-bold text-white">${price.toFixed(2)}</span>
                 <button 
-                  onClick={handleAddToCart} 
-                  className="font-bold text-[9px] h-8 rounded-lg uppercase tracking-widest px-3.5 cursor-pointer bg-white text-zinc-950 hover:bg-zinc-200 transition-colors"
+                  onClick={() => {
+                    if (quantityInCart > 0) {
+                      window.dispatchEvent(new CustomEvent('toggle-cart-drawer'));
+                    } else {
+                      handleAddToCart();
+                    }
+                  }} 
+                  className={cn(
+                    "font-bold text-[9px] h-8 rounded-lg uppercase tracking-widest px-3.5 cursor-pointer transition-colors border-none",
+                    quantityInCart > 0 
+                      ? "bg-emerald-600 text-white hover:bg-emerald-700" 
+                      : "bg-white text-zinc-950 hover:bg-zinc-200"
+                  )}
                 >
-                  {isAdding ? 'Added' : 'Add To Bag'}
+                  {quantityInCart > 0 ? 'Added (Open Bag)' : isAdding ? 'Added' : 'Add To Bag'}
                 </button>
               </div>
             </div>

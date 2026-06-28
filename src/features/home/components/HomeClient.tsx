@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import {
   useFeaturedProducts,
-  useCategories,
+  useProducts,
 } from '@/features/shared/hooks/queries';
 
 const TRUST_PILLARS = [
@@ -66,8 +66,8 @@ const HERO_SLIDES = [
     title: 'The Essence of Excellence',
     description: 'Discover a world of unparalleled luxury and sensory indulgence, curated for the discerning connoisseur.',
     image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1800&auto=format&fit=crop',
-    link: '/categories',
-    btnText: 'Explore Collections',
+    link: '#catalog-section',
+    btnText: 'Shop All Fragrances',
   },
   {
     id: 2,
@@ -89,9 +89,15 @@ const HERO_SLIDES = [
   },
 ];
 
+
+
 export function HomeClient() {
-  const { data: featured, isLoading: isLoadingFeatured } = useFeaturedProducts();
-  const { data: categories, isLoading: isLoadingCategories } = useCategories();
+  const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
+  const { data: productsData, isLoading: isLoadingProducts } = useProducts({
+    category: selectedCategory === 'all' ? undefined : selectedCategory,
+    limit: 12,
+  });
+  const productsList = productsData?.products || [];
   const [email, setEmail] = React.useState('');
   const [activeSlide, setActiveSlide] = React.useState(0);
 
@@ -181,11 +187,23 @@ export function HomeClient() {
                   transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                   className="mt-6 sm:mt-8 flex items-center gap-4"
                 >
-                  <Link href={currentHero.link}>
-                    <button className="btn-shimmer font-sans text-[9px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-6 sm:px-8 h-9 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg">
+                  {currentHero.link.startsWith('#') ? (
+                    <button
+                      onClick={() => {
+                        const el = document.getElementById(currentHero.link.substring(1));
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="btn-shimmer font-sans text-[9px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-6 sm:px-8 h-9 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg"
+                    >
                       {currentHero.btnText} <ArrowRight className="h-3 w-3" />
                     </button>
-                  </Link>
+                  ) : (
+                    <Link href={currentHero.link}>
+                      <button className="btn-shimmer font-sans text-[9px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-6 sm:px-8 h-9 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg">
+                        {currentHero.btnText} <ArrowRight className="h-3 w-3" />
+                      </button>
+                    </Link>
+                  )}
                 </motion.div>
               </div>
             </motion.div>
@@ -226,154 +244,13 @@ export function HomeClient() {
           <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
         </section>
 
-        {/* ═══════════════════════════════════════════════
-            2. COLLECTIONS GRID
-        ═══════════════════════════════════════════════ */}
-        <section className="px-4 sm:px-6 lg:px-8 py-14 border-b border-border/20">
-          <div className="max-w-7xl mx-auto">
-            {/* Section header */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6 }}
-              className="flex items-end justify-between mb-8"
-            >
-              <div className="space-y-1">
-                <span className="font-sans text-[8px] uppercase tracking-[0.3em] text-primary font-semibold">Maison Catalog</span>
-                <h2 className="font-serif text-2xl sm:text-3xl font-light tracking-wide text-foreground">
-                  Explore Collections
-                </h2>
-              </div>
-              <Link href="/categories" className="font-sans text-[9px] uppercase tracking-[0.2em] font-bold text-primary hover:opacity-70 transition-opacity flex items-center gap-1">
-                All <ArrowRight className="h-3 w-3" />
-              </Link>
-            </motion.div>
 
-            {/* Desktop: editorial asymmetric grid | Mobile: horizontal scroll */}
-            {isLoadingCategories || !categories || categories.length === 0 ? (
-              <>
-                {/* Mobile scroll skeletons */}
-                <div className="flex gap-3 overflow-x-auto pb-3 snap-x snap-mandatory no-scrollbar lg:hidden">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <div
-                      key={n}
-                      className="snap-start flex-shrink-0 w-[150px] sm:w-[200px] aspect-[3/4] bg-secondary/60 animate-pulse rounded-xl"
-                    />
-                  ))}
-                </div>
 
-                {/* Desktop asymmetric grid skeletons */}
-                <div className="hidden lg:grid grid-cols-4 grid-rows-2 gap-3 h-[500px]">
-                  <div className="col-span-2 row-span-2 bg-secondary/60 animate-pulse rounded-2xl" />
-                  <div className="col-span-1 row-span-1 bg-secondary/60 animate-pulse rounded-xl" />
-                  <div className="col-span-1 row-span-1 bg-secondary/60 animate-pulse rounded-xl" />
-                  <div className="col-span-1 row-span-1 bg-secondary/60 animate-pulse rounded-xl" />
-                  <div className="col-span-1 row-span-1 bg-secondary/60 animate-pulse rounded-xl" />
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Mobile horizontal scroll */}
-                <div className="flex gap-3 overflow-x-auto pb-3 snap-x snap-mandatory scroll-smooth no-scrollbar lg:hidden">
-                  {categories.map((cat, idx) => (
-                    <motion.div
-                      key={cat.id}
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.08, duration: 0.9 }}
-                      className="snap-start flex-shrink-0 w-[150px] sm:w-[200px]"
-                    >
-                      <Link
-                        href={`/category/${cat.slug}`}
-                        className="relative block aspect-[3/4] bg-secondary overflow-hidden group rounded-xl"
-                      >
-                        <OptimizedImage
-                          src={cat.image}
-                          alt={cat.name}
-                          fill
-                          priority={idx === 0}
-                          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <h3 className="font-serif text-sm text-white font-light tracking-widest leading-snug">
-                            {cat.name}
-                          </h3>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Desktop: editorial grid — first tile tall, rest equal */}
-                <motion.div 
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: '-80px' }}
-                  variants={staggerContainer}
-                  className="hidden lg:grid grid-cols-4 grid-rows-2 gap-3 h-[500px]"
-                >
-                  {/* Large featured tile */}
-                  {categories[0] && (
-                    <motion.div variants={fadeInUp} className="col-span-2 row-span-2">
-                      <Link
-                        href={`/category/${categories[0].slug}`}
-                        className="relative block w-full h-full bg-secondary overflow-hidden group rounded-2xl border border-border/20 shadow-xs"
-                      >
-                        <OptimizedImage
-                          src={categories[0].image}
-                          alt={categories[0].name}
-                          fill
-                          priority
-                          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-6">
-                          <span className="font-sans text-[8px] uppercase tracking-[0.25em] text-primary/80 block mb-1.5">Featured Collection</span>
-                          <h3 className="font-serif text-2xl text-white font-light tracking-widest">
-                            {categories[0].name}
-                          </h3>
-                        </div>
-                        <div className="absolute inset-0 border border-primary/0 group-hover:border-primary/30 transition-colors duration-500 pointer-events-none" />
-                      </Link>
-                    </motion.div>
-                  )}
-
-                  {/* 4 small tiles */}
-                  {categories.slice(1, 5).map((cat) => (
-                    <motion.div key={cat.id} variants={fadeInUp} className="col-span-1 row-span-1">
-                      <Link
-                        href={`/category/${cat.slug}`}
-                        className="relative block w-full h-full bg-secondary overflow-hidden group rounded-xl border border-border/20 shadow-xs"
-                      >
-                        <OptimizedImage
-                          src={cat.image}
-                          alt={cat.name}
-                          fill
-                          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-3">
-                          <h3 className="font-serif text-sm text-white font-light tracking-wide">
-                            {cat.name}
-                          </h3>
-                        </div>
-                        <div className="absolute inset-0 border border-primary/0 group-hover:border-primary/25 transition-colors duration-500 pointer-events-none" />
-                      </Link>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </>
-            )}
-          </div>
-        </section>
 
         {/* ═══════════════════════════════════════════════
             3. FEATURED PRODUCTS — stagger-animated cards
         ═══════════════════════════════════════════════ */}
-        <section className="px-4 sm:px-6 lg:px-8 py-16">
+        <section id="catalog-section" className="px-4 sm:px-6 lg:px-8 pt-6 pb-16">
           <div className="max-w-7xl mx-auto">
             {/* Section header */}
             <motion.div 
@@ -381,21 +258,58 @@ export function HomeClient() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.6 }}
-              className="mb-10 flex items-end justify-between"
+              className="mb-8 flex items-end justify-between"
             >
               <div className="space-y-1">
-                <span className="font-sans text-[8px] uppercase tracking-[0.3em] text-primary font-semibold">Signature Selection</span>
+                <span className="font-sans text-[8px] uppercase tracking-[0.3em] text-primary font-semibold">Maison Catalog</span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-light tracking-wide text-foreground">
-                  Curated Masterpieces
+                  Our Fragrances
                 </h2>
               </div>
-              <Link href="/categories" className="font-sans text-[9px] uppercase tracking-[0.2em] font-bold text-primary hover:opacity-70 transition-opacity flex items-center gap-1">
-                Shop All <ArrowRight className="h-3 w-3" />
-              </Link>
             </motion.div>
 
-            {isLoadingFeatured ? (
-              <Loader />
+            {/* Interactive Category Filter Tabs */}
+            <div className="flex gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar scroll-smooth">
+              {[
+                { label: 'All', value: 'all' },
+                { label: 'Oud & Arabic', value: 'oud-collection' },
+                { label: 'Woody & Oriental', value: 'woody-oriental' },
+                { label: 'Fresh & Floral', value: 'fresh-floral' },
+                { label: 'Pour Homme', value: 'mens-perfumes' },
+                { label: 'Pour Femme', value: 'womens-perfumes' },
+              ].map((tab) => {
+                const isActive = selectedCategory === tab.value;
+                return (
+                  <button
+                    key={tab.value}
+                    onClick={() => setSelectedCategory(tab.value)}
+                    className={cn(
+                      'px-5 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest transition-all cursor-pointer flex-shrink-0 border',
+                      isActive
+                        ? 'bg-zinc-950 text-white border-zinc-950 shadow-xs'
+                        : 'bg-secondary/40 text-muted-foreground border-border/20 hover:bg-secondary/80 hover:text-foreground'
+                    )}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {isLoadingProducts ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10">
+                {[1, 2, 3, 4].map((n) => (
+                  <div key={n} className="space-y-4">
+                    <div className="aspect-[3/4] w-full rounded-2xl bg-secondary/60 animate-pulse" />
+                    <div className="h-3 w-1/3 bg-secondary/60 animate-pulse rounded-md" />
+                    <div className="h-4 w-2/3 bg-secondary/60 animate-pulse rounded-md" />
+                  </div>
+                ))}
+              </div>
+            ) : productsList.length === 0 ? (
+              <div className="text-center py-12 text-sm text-muted-foreground">
+                No perfumes found in this collection.
+              </div>
             ) : (
               <motion.div 
                 initial="hidden"
@@ -404,7 +318,7 @@ export function HomeClient() {
                 variants={staggerContainer}
                 className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10"
               >
-                {featured?.map((product, idx) => (
+                {productsList.map((product, idx) => (
                   <ProductCard key={product.id} product={product} index={idx} />
                 ))}
               </motion.div>

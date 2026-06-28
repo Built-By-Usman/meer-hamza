@@ -29,8 +29,17 @@ export const ProductCard = React.memo(function ProductCard({ product, index = 0 
   const [addBtnKey, setAddBtnKey] = React.useState(0);
 
   const addToCart = useCartStore((s) => s.addToCart);
-  const { toggleWishlist, isInWishlist } = useWishlistStore();
-  const isFav = isInWishlist(product.id);
+  const wishlistItems = useWishlistStore((s) => s.items);
+  const toggleWishlist = useWishlistStore((s) => s.toggleWishlist);
+  const isFav = wishlistItems.some((item) => item.id === product.id);
+
+  const cartItems = useCartStore((s) => s.items);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+
+  const currentCartItem = cartItems.find(
+    (item) => item.productId === product.id && item.variantId === selectedVariant?.id
+  );
+  const quantityInCart = currentCartItem ? currentCartItem.quantity : 0;
 
   const price = selectedVariant?.price !== undefined ? selectedVariant.price : product.basePrice;
   const originalPrice = selectedVariant?.originalPrice || product.originalPrice || price;
@@ -202,7 +211,7 @@ export const ProductCard = React.memo(function ProductCard({ product, index = 0 
             </div>
           </div>
 
-          {/* ── ADD TO BAG BUTTON — always visible ── */}
+          {/* ── ADD TO BAG BUTTON or QUANTITY CONTROL ── */}
           <div
             className="relative flex-shrink-0"
             onClick={(e) => e.stopPropagation()}
@@ -217,25 +226,61 @@ export const ProductCard = React.memo(function ProductCard({ product, index = 0 
               </span>
             )}
 
-            <button
-              key={`btn-${addBtnKey}`}
-              onClick={handleAddToCart}
-              aria-label="Add to bag"
-              className={cn(
-                'add-pop relative flex items-center justify-center gap-1.5',
-                'w-10 h-10 rounded-full',
-                'transition-all duration-300 active:scale-90',
-                'shadow-sm hover:shadow-md',
-                isAdding
-                  ? 'bg-emerald-500 text-white scale-110'
-                  : 'bg-zinc-950 text-white hover:bg-zinc-700'
-              )}
-            >
-              {isAdding
-                ? <Check className="h-4 w-4 stroke-[2.5]" />
-                : <ShoppingBag className="h-4 w-4" />
-              }
-            </button>
+            {quantityInCart > 0 ? (
+              <div className="flex items-center bg-zinc-950 border border-zinc-800 rounded-full h-10 px-1 py-1 shadow-sm gap-1 select-none animate-fade-in">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateQuantity(product.id, quantityInCart - 1, selectedVariant?.id);
+                    toast.success('Updated cart', {
+                      description: `Decreased ${product.name} quantity to ${quantityInCart - 1}`,
+                      duration: 1500,
+                    });
+                  }}
+                  className="w-8 h-8 rounded-full bg-zinc-900 text-[#f0d98a] border border-zinc-800/60 flex items-center justify-center font-bold text-xs hover:bg-zinc-800 hover:text-white active:scale-90 transition-all cursor-pointer"
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
+                <span className="font-sans font-bold text-xs text-[#f0d98a] px-2.5 min-w-[20px] text-center">
+                  {quantityInCart}
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateQuantity(product.id, quantityInCart + 1, selectedVariant?.id);
+                    toast.success('Updated cart', {
+                      description: `Increased ${product.name} quantity to ${quantityInCart + 1}`,
+                      duration: 1500,
+                    });
+                  }}
+                  className="w-8 h-8 rounded-full bg-zinc-900 text-[#f0d98a] border border-zinc-800/60 flex items-center justify-center font-bold text-xs hover:bg-zinc-800 hover:text-white active:scale-90 transition-all cursor-pointer"
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <button
+                key={`btn-${addBtnKey}`}
+                onClick={handleAddToCart}
+                aria-label="Add to bag"
+                className={cn(
+                  'add-pop relative flex items-center justify-center gap-1.5',
+                  'w-10 h-10 rounded-full',
+                  'transition-all duration-300 active:scale-90',
+                  'shadow-sm hover:shadow-md',
+                  isAdding
+                    ? 'bg-emerald-500 text-white scale-110'
+                    : 'bg-zinc-950 text-white hover:bg-zinc-700'
+                )}
+              >
+                {isAdding
+                  ? <Check className="h-4 w-4 stroke-[2.5]" />
+                  : <ShoppingBag className="h-4 w-4" />
+                }
+              </button>
+            )}
           </div>
         </div>
 
