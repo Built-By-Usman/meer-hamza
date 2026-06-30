@@ -10,7 +10,22 @@ export class ApiError extends Error {
   }
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const getBaseUrl = (): string => {
+  // 1. Explicit env variable always wins (local dev or CI)
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  // 2. On the client side, detect production domain and use the real backend
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host === 'timelessbymeer.com' || host === 'www.timelessbymeer.com') {
+      return 'https://backend.timelessbymeer.com';
+    }
+  }
+  // 3. Local development fallback
+  return 'http://localhost:8000';
+};
+
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean>;
@@ -34,6 +49,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     }
   }
 
+  const BASE_URL = getBaseUrl();
   const url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}${queryString}`;
 
   const defaultHeaders: HeadersInit = {
