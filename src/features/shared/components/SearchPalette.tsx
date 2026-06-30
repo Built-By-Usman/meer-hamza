@@ -19,18 +19,11 @@ interface SearchPaletteProps {
   onClose: () => void;
 }
 
-const TRENDING = [
-  'Royal Oud', 'Midnight Essence', 'Velvet Noir',
-  'Golden Amber', 'Fresh Floral', 'Pour Homme',
-];
-
-const DEFAULT_RECENT = ['Oud Collection', 'Woody Oriental', 'Rose Floral'];
-
 export function SearchPalette({ isOpen, onClose }: SearchPaletteProps) {
   const router = useRouter();
   const [query, setQuery] = React.useState('');
   const [debouncedQuery, setDebouncedQuery] = React.useState('');
-  const [recentSearches, setRecentSearches] = React.useState<string[]>(DEFAULT_RECENT);
+  const [recentSearches, setRecentSearches] = React.useState<string[]>([]);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const addToCart = useCartStore((s) => s.addToCart);
 
@@ -74,6 +67,11 @@ export function SearchPalette({ isOpen, onClose }: SearchPaletteProps) {
     limit: 6,
   });
   const searchResults = resultsData?.products || [];
+
+  const { data: trendingData } = useProducts({
+    limit: 6,
+  });
+  const trendingProducts = trendingData?.products || [];
 
   const saveSearch = (term: string) => {
     const updated = [term, ...recentSearches.filter((t) => t !== term)].slice(0, 6);
@@ -296,28 +294,30 @@ export function SearchPalette({ isOpen, onClose }: SearchPaletteProps) {
                   )}
 
                   {/* Trending */}
-                  <div>
-                    <span className="font-sans text-[8px] uppercase tracking-[0.28em] font-bold text-muted-foreground flex items-center gap-1.5 mb-3">
-                      <Flame className="h-3 w-3 text-orange-400" /> Trending Now
-                    </span>
-                    <div className="grid grid-cols-2 gap-2">
-                      {TRENDING.map((term, i) => (
-                        <button
-                          key={term}
-                          onClick={() => goToSearch(term)}
-                          className="text-left flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border/30 hover:border-primary/25 hover:bg-primary/3 group transition-all"
-                        >
-                          <span className="font-sans text-[8px] font-black text-primary/40 group-hover:text-primary/70 w-3.5 flex-shrink-0 transition-colors">
-                            {String(i + 1).padStart(2, '0')}
-                          </span>
-                          <span className="font-sans text-xs font-medium text-foreground/75 group-hover:text-foreground transition-colors line-clamp-1">
-                            {term}
-                          </span>
-                          <ArrowUpRight className="h-3 w-3 text-muted-foreground/30 group-hover:text-primary/60 ml-auto flex-shrink-0 transition-colors" />
-                        </button>
-                      ))}
+                  {trendingProducts.length > 0 && (
+                    <div>
+                      <span className="font-sans text-[8px] uppercase tracking-[0.28em] font-bold text-muted-foreground flex items-center gap-1.5 mb-3">
+                        <Flame className="h-3 w-3 text-orange-400" /> Trending Now
+                      </span>
+                      <div className="grid grid-cols-2 gap-2">
+                        {trendingProducts.map((product, i) => (
+                          <button
+                            key={product.id}
+                            onClick={() => goToProduct(product.slug, product.name)}
+                            className="text-left flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border/30 hover:border-primary/25 hover:bg-primary/3 group transition-all"
+                          >
+                            <span className="font-sans text-[8px] font-black text-primary/40 group-hover:text-primary/70 w-3.5 flex-shrink-0 transition-colors">
+                              {String(i + 1).padStart(2, '0')}
+                            </span>
+                            <span className="font-sans text-xs font-medium text-foreground/75 group-hover:text-foreground transition-colors line-clamp-1">
+                              {product.name}
+                            </span>
+                            <ArrowUpRight className="h-3 w-3 text-muted-foreground/30 group-hover:text-primary/60 ml-auto flex-shrink-0 transition-colors" />
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Quick hint */}
                   <p className="text-center font-sans text-[9px] text-muted-foreground/40 uppercase tracking-widest pb-2">
