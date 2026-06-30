@@ -2,14 +2,13 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { ShoppingCart, Trash2, Plus, Minus, CreditCard, Tag, X } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, CreditCard, X } from 'lucide-react';
 import { Sheet, SheetHeader, SheetTitle, SheetContent, SheetFooter } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { EmptyState } from '@/components/common/EmptyState';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useCartStore } from '@/store/cart';
-import { useValidateCoupon, useSettings } from '@/features/shared/hooks/queries';
+import { useSettings } from '@/features/shared/hooks/queries';
 import { toast } from 'sonner';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { formatPrice } from '@/utils/currency';
@@ -23,15 +22,12 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const router = useRouter();
   const {
     items,
-    coupon,
     subtotal,
     discount,
     shippingCost,
     total,
     updateQuantity,
     removeFromCart,
-    applyCoupon,
-    removeCoupon,
   } = useCartStore();
   const { data: storeSettings } = useSettings();
 
@@ -40,42 +36,9 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const finalShippingCost = (minOrderForFree > 0 && subtotal >= minOrderForFree) ? 0 : baseShipping;
   const finalTotal = Math.max(0, parseFloat((subtotal - discount + finalShippingCost).toFixed(2)));
 
-  const [couponCode, setCouponCode] = React.useState('');
-  const validateCouponMutation = useValidateCoupon();
-
   const handleCheckoutClick = () => {
     onClose();
     router.push('/checkout');
-  };
-
-  const handleApplyCoupon = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!couponCode.trim()) {
-      toast.error('Please enter a coupon code');
-      return;
-    }
-
-    validateCouponMutation.mutate(
-      { code: couponCode.trim(), subtotal },
-      {
-        onSuccess: (data) => {
-          if (data) {
-            applyCoupon(data);
-            toast.success(`Coupon code ${data.code} applied successfully!`, {
-              description: data.type === 'percentage' ? `${data.value}% discount applied` : `${formatPrice(data.value)} discount applied`,
-            });
-            setCouponCode('');
-          } else {
-            toast.error('Invalid coupon code or minimum purchase amount not met.', {
-              description: 'Try codes like PREMIUM10 or WELCOME50 (min spend Rs. 300).',
-            });
-          }
-        },
-        onError: () => {
-          toast.error('Error validating coupon code');
-        },
-      }
-    );
   };
 
   return (
@@ -171,46 +134,6 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
       {items.length > 0 && (
         <SheetFooter className="p-5 border-t flex flex-col space-y-4 bg-secondary/5 text-left">
-          {/* Coupon Entry Block */}
-          <div className="w-full space-y-2 border-b pb-4">
-            <span className="font-sans text-[9px] uppercase tracking-wider text-muted-foreground font-bold">Have a Coupon?</span>
-            {!coupon ? (
-              <form onSubmit={handleApplyCoupon} className="flex gap-2 w-full">
-                <Input
-                  placeholder="Promo Code (e.g. PREMIUM10)"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  className="h-9 text-xs rounded-lg border-border"
-                  disabled={validateCouponMutation.isPending}
-                />
-                <Button
-                  type="submit"
-                  size="sm"
-                  variant="outline"
-                  disabled={validateCouponMutation.isPending}
-                  className="h-9 text-xs font-bold shrink-0 cursor-pointer rounded-lg px-4 border-zinc-950 text-zinc-950 hover:bg-zinc-50"
-                >
-                  Apply
-                </Button>
-              </form>
-            ) : (
-              <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 rounded-lg p-2.5 w-full text-xs">
-                <div className="flex items-center gap-2">
-                  <Tag className="h-3.5 w-3.5 animate-scale-up" />
-                  <span className="font-bold">Code "{coupon.code}" active</span>
-                </div>
-                <button
-                  onClick={removeCoupon}
-                  type="button"
-                  className="h-5 w-5 rounded-full hover:bg-emerald-500/20 flex items-center justify-center cursor-pointer transition-colors"
-                  aria-label="Remove coupon"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-          </div>
-
           {/* Summary pricing */}
           <div className="space-y-1.5 text-xs w-full">
             <div className="flex justify-between text-muted-foreground">
