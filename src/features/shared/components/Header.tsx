@@ -175,15 +175,6 @@ export function Header() {
                 </kbd>
               </button>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(true)}
-                className="lg:hidden h-9 w-9 rounded-full cursor-pointer text-zinc-400 hover:text-white hover:bg-zinc-900"
-                aria-label="Search"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
 
               {/* Wishlist count trigger (Always visible) */}
               <Button
