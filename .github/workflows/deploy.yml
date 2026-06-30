@@ -1,0 +1,25 @@
+name: Deploy Frontend to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 187.77.144.35
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/meer-hamza
+            git pull
+            npm install
+            npm run build
+            cp -r public .next/standalone/
+            cp -r .next/static .next/standalone/.next/
+            systemctl restart meer-hamza-frontend
