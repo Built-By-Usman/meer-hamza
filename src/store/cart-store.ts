@@ -19,8 +19,8 @@ export interface CartState {
 }
 
 const TAX_RATE = 0.08; // 8% sales tax
-const FREE_SHIPPING_THRESHOLD = 150; // Free shipping over $150
-const STANDARD_SHIPPING_COST = 15;
+const FREE_SHIPPING_THRESHOLD = 0; // Free shipping threshold (0 means disabled)
+const STANDARD_SHIPPING_COST = 250;
 
 const calculateTotals = (items: OrderItem[], coupon: Coupon | null) => {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -39,7 +39,7 @@ const calculateTotals = (items: OrderItem[], coupon: Coupon | null) => {
   }
 
   // Free shipping threshold check (after regular discount)
-  if (subtotal - discount >= FREE_SHIPPING_THRESHOLD) {
+  if (FREE_SHIPPING_THRESHOLD > 0 && subtotal - discount >= FREE_SHIPPING_THRESHOLD) {
     shippingCost = 0;
   }
 
