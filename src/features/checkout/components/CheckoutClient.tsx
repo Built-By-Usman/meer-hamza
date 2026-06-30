@@ -38,6 +38,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 export function CheckoutClient() {
   const router = useRouter();
   const [step, setStep] = React.useState<1 | 2 | 3>(1);
+  const [mounted, setMounted] = React.useState(false);
 
   const { items, subtotal, discount, shippingCost, clearCart } = useCartStore();
   const { user } = useAuthStore();
@@ -46,12 +47,17 @@ export function CheckoutClient() {
   const { data: savedAddress } = useMyAddress(!!user);
   const updateAddressMutation = useUpdateMyAddress();
 
-  // Redirect if cart is empty on mount
+  // Set mounted state on client mount to ensure hydration is completed
   React.useEffect(() => {
-    if (items.length === 0 && createOrderMutation.isIdle) {
+    setMounted(true);
+  }, []);
+
+  // Redirect if cart is empty on mount (only after mounting/hydration is completed)
+  React.useEffect(() => {
+    if (mounted && items.length === 0 && createOrderMutation.isIdle) {
       router.push('/');
     }
-  }, [items, router, createOrderMutation]);
+  }, [mounted, items, router, createOrderMutation]);
 
   // Form initialization with React Hook Form
   const {
@@ -152,7 +158,7 @@ export function CheckoutClient() {
     });
   };
 
-  if (items.length === 0 && createOrderMutation.isIdle) {
+  if (!mounted || (items.length === 0 && createOrderMutation.isIdle)) {
     return <Loader fullPage />;
   }
 
