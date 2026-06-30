@@ -32,16 +32,26 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   } = useCartStore();
   const { data: storeSettings } = useSettings();
 
-  // Only use live API delivery_charges once the store has hydrated from localStorage.
-  // Before hydration, shippingCost from the store is 0 (initial), so we show nothing.
-  const baseShipping = _hasHydrated
+  // Always charge delivery — min_order_amount is NOT a free-shipping threshold.
+  // It is the minimum subtotal required to be allowed to place an order.
+  const deliveryFee = _hasHydrated
     ? (storeSettings !== undefined ? storeSettings.delivery_charges : shippingCost)
     : shippingCost;
-  const minOrderForFree = storeSettings?.min_order_amount || 0;
-  const finalShippingCost = (minOrderForFree > 0 && subtotal >= minOrderForFree) ? 0 : baseShipping;
-  const finalTotal = Math.max(0, parseFloat((subtotal - discount + finalShippingCost).toFixed(2)));
+
+  const minOrderAmount = storeSettings?.min_order_amount || 0;
+  // True when the cart subtotal meets (or exceeds) the minimum required order amount
+  const meetsMinOrder = minOrderAmount <= 0 || subtotal >= minOrderAmount;
+  const remainingForMin = Math.max(0, minOrderAmount - subtotal);
+
+  const finalTotal = Math.max(0, parseFloat((subtotal - discount + deliveryFee).toFixed(2)));
 
   const handleCheckoutClick = () => {
+    if (!meetsMinOrder) {
+      toast.error(`Minimum order amount is ${formatPrice(minOrderAmount)}`, {
+        description: `Add ${formatPrice(remainingForMin)} more to proceed to checkout.`,
+      });
+      return;
+    }
     onClose();
     router.push('/checkout');
   };
@@ -152,14 +162,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
             )}
             <div className="flex justify-between text-muted-foreground">
-              <span>Shipping</span>
-              <span>
-                {finalShippingCost === 0 ? (
-                  <span className="text-emerald-600 font-medium">Free</span>
-                ) : (
-                  `${formatPrice(finalShippingCost)}`
-                )}
-              </span>
+              <span>Delivery</span>
+              <span>{formatPrice(deliveryFee)}</span>
             </div>
             <div className="flex justify-between text-sm font-bold text-foreground border-t pt-2 mt-2 font-serif">
               <span>Total</span>
@@ -167,11 +171,20 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </div>
           </div>
 
+          {/* Minimum order warning */}
+          {!meetsMinOrder && minOrderAmount > 0 && (
+            <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-center">
+              Add <span className="font-bold">{formatPrice(remainingForMin)}</span> more to reach the minimum order of{' '}
+              <span className="font-bold">{formatPrice(minOrderAmount)}</span>
+            </div>
+          )}
+
           {/* CTA Action */}
           <div className="w-full">
             <Button
               onClick={handleCheckoutClick}
-              className="w-full cursor-pointer flex items-center justify-center space-x-2 bg-zinc-950 text-white hover:bg-zinc-900 py-6 text-xs font-bold tracking-widest uppercase rounded-lg"
+              disabled={!meetsMinOrder}
+              className="w-full cursor-pointer flex items-center justify-center space-x-2 bg-zinc-950 text-white hover:bg-zinc-900 py-6 text-xs font-bold tracking-widest uppercase rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <CreditCard className="h-4 w-4" />
               <span>Proceed to Checkout</span>
@@ -183,6 +196,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     </Sheet>
   );
 }
+
 
 // Inline helper to avoid circular dependencies
 function cn(...inputs: any[]) {

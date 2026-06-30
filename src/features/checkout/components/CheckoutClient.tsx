@@ -87,13 +87,25 @@ export function CheckoutClient() {
     }
   }, [savedAddress, setValue]);
 
-  const baseShipping = storeSettings !== undefined ? storeSettings.delivery_charges : shippingCost;
-  const minOrderForFree = storeSettings?.min_order_amount || 0;
-  const finalShippingCost = (minOrderForFree > 0 && subtotal >= minOrderForFree) ? 0 : baseShipping;
-  const finalTotal = Math.max(0, parseFloat((subtotal - discount + finalShippingCost).toFixed(2)));
+  // Always charge delivery fee. min_order_amount is the minimum subtotal to
+  // be able to place an order — it is NOT a free-shipping threshold.
+  const deliveryFee = storeSettings !== undefined ? storeSettings.delivery_charges : shippingCost;
+  const minOrderAmount = storeSettings?.min_order_amount || 0;
+  const meetsMinOrder = minOrderAmount <= 0 || subtotal >= minOrderAmount;
+  const remainingForMin = Math.max(0, minOrderAmount - subtotal);
+  const finalTotal = Math.max(0, parseFloat((subtotal - discount + deliveryFee).toFixed(2)));
 
   // Submit final order to repository
   const onSubmit = (values: CheckoutFormValues) => {
+    // Guard: block order if minimum order amount is not met
+    if (!meetsMinOrder) {
+      toast.error(`Minimum order amount is ${formatPrice(minOrderAmount)}`, {
+        description: `Add ${formatPrice(remainingForMin)} more to your cart to proceed.`,
+      });
+      setStep(1);
+      return;
+    }
+
     setStep(3); // Enter automatic placing order loading state (Step 3)
     const orderInput = {
       userId: user?.id || 'guest',
@@ -101,7 +113,7 @@ export function CheckoutClient() {
       subtotal,
       discount,
       tax: 0,
-      shippingCost: finalShippingCost,
+      shippingCost: deliveryFee,
       total: finalTotal,
       shippingAddress: {
         firstName: values.firstName,
@@ -299,7 +311,7 @@ export function CheckoutClient() {
                   ))}
                 </div>
 
-                 {/* Pricing summary */}
+                                 {/* Pricing summary */}
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between text-muted-foreground font-semibold">
                     <span>Subtotal</span>
@@ -312,19 +324,20 @@ export function CheckoutClient() {
                     </div>
                   )}
                   <div className="flex justify-between text-muted-foreground font-semibold">
-                    <span>Shipping fee</span>
-                    <span>
-                      {finalShippingCost === 0 ? (
-                        <span className="text-emerald-600 font-semibold">Free</span>
-                      ) : (
-                        `${formatPrice(finalShippingCost)}`
-                      )}
-                    </span>
+                    <span>Delivery fee</span>
+                    <span>{formatPrice(deliveryFee)}</span>
                   </div>
                   <div className="flex justify-between text-sm font-extrabold text-foreground border-t pt-3 mt-2">
                     <span>Grand Total</span>
                     <span>{formatPrice(finalTotal)}</span>
                   </div>
+                  {/* Minimum order warning */}
+                  {!meetsMinOrder && minOrderAmount > 0 && (
+                    <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-center mt-2">
+                      Add <span className="font-bold">{formatPrice(remainingForMin)}</span> more to reach the minimum order of{' '}
+                      <span className="font-bold">{formatPrice(minOrderAmount)}</span>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
