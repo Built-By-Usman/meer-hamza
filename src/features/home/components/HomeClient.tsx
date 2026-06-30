@@ -64,31 +64,13 @@ const staggerContainer = {
 const HERO_SLIDES = [
   {
     id: 1,
-    tagline: 'Exclusive Reserve · Est. 2019',
+    tagline: 'Timeless by Meer · Private Collection',
     title: 'The Essence of Excellence',
     description: 'Discover a world of unparalleled luxury and sensory indulgence, curated for the discerning connoisseur.',
     image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1800&auto=format&fit=crop',
     link: '#catalog-section',
     btnText: 'Shop All Fragrances',
-  },
-  {
-    id: 2,
-    tagline: 'Maison Special · Limited Edition',
-    title: 'Midnight Seduction Scent',
-    description: 'A dark, sensual fusion of warm spices, sultry black orchid, and toasted coffee beans.',
-    image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1800&auto=format&fit=crop',
-    link: '/product/midnight-essence',
-    btnText: 'Discover Midnight',
-  },
-  {
-    id: 3,
-    tagline: 'Private Blend · New Launch',
-    title: 'Royal Oud Masterpiece',
-    description: 'Sourced from the heart of Cambodia, our pure oud oil is layered with Bulgarian rose petals.',
-    image: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?q=80&w=1800&auto=format&fit=crop',
-    link: '/product/royal-oud',
-    btnText: 'Experience Oud',
-  },
+  }
 ];
 
 
@@ -117,11 +99,6 @@ export function HomeClient() {
     }
     return [
       { label: 'All', value: 'all' },
-      { label: 'Oud & Arabic', value: 'oud-collection' },
-      { label: 'Woody & Oriental', value: 'woody-oriental' },
-      { label: 'Fresh & Floral', value: 'fresh-floral' },
-      { label: 'Pour Homme', value: 'mens-perfumes' },
-      { label: 'Pour Femme', value: 'womens-perfumes' },
     ];
   }, [categoriesData]);
 
