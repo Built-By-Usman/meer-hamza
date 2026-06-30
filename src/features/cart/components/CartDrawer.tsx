@@ -133,7 +133,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       </SheetContent>
 
       {items.length > 0 && (
-        <SheetFooter className="p-5 border-t flex flex-col space-y-4 bg-secondary/5 text-left">
+        <div className="p-5 border-t flex flex-col space-y-4 bg-secondary/5 text-left">
           {/* Summary pricing */}
           <div className="space-y-1.5 text-xs w-full">
             <div className="flex justify-between text-muted-foreground">
@@ -172,7 +172,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <span>Proceed to Checkout</span>
             </Button>
           </div>
-        </SheetFooter>
+        </div>
       )}
       </ErrorBoundary>
     </Sheet>
