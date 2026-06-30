@@ -1,10 +1,16 @@
 import type { NextConfig } from "next";
 
+const BACKEND_URL = 'https://backend.timelessbymeer.com';
+
 const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
   output: 'standalone',
+  // Expose the backend URL to the browser bundle
+  env: {
+    NEXT_PUBLIC_API_URL: BACKEND_URL,
+  },
   images: {
     formats: ['image/webp'],
     remotePatterns: [
