@@ -118,7 +118,7 @@ export const ProductCard = React.memo(function ProductCard({ product, index = 0 
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleWishlistToggle(e); }}
             aria-label={isFav ? 'Remove from wishlist' : 'Save to wishlist'}
             className={cn(
-              'absolute top-3 right-3 z-10 w-8 h-8 rounded-full',
+              'absolute top-3 right-3 z-20 w-8 h-8 rounded-full',
               'flex items-center justify-center',
               'bg-white/85 backdrop-blur-sm border border-white/60 shadow-sm',
               'transition-all duration-200 active:scale-90 hover:scale-110',
@@ -134,10 +134,11 @@ export const ProductCard = React.memo(function ProductCard({ product, index = 0 
           </button>
 
           {/* ── QUICK-VIEW centre — desktop hover only ── */}
-          <div className="absolute inset-0 z-10 flex items-center justify-center">
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
             <button
               onClick={(e) => { e.stopPropagation(); setIsQuickViewOpen(true); }}
               className={cn(
+                'pointer-events-auto',
                 'hidden sm:flex items-center gap-1.5',
                 'opacity-0 group-hover:opacity-100',
                 'translate-y-3 group-hover:translate-y-0',
