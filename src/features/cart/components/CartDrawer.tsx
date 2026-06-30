@@ -165,7 +165,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <span>Delivery</span>
               <span>{formatPrice(deliveryFee)}</span>
             </div>
-            <div className="flex justify-between text-sm font-bold text-foreground border-t pt-2 mt-2 font-serif">
+            <div className="flex justify-between text-base font-extrabold text-foreground border-t pt-2 mt-2 font-sans">
               <span>Total</span>
               <span>{formatPrice(finalTotal)}</span>
             </div>
