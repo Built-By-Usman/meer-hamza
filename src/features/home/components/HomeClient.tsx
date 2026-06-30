@@ -115,7 +115,7 @@ export function HomeClient() {
         btnText: 'Shop Collection',
       }));
     }
-    return HERO_SLIDES;
+    return [];
   }, [dynamicBannersData]);
 
   // Auto-play slides every 6.5 seconds
@@ -127,7 +127,7 @@ export function HomeClient() {
     return () => clearInterval(timer);
   }, [heroSlides.length]);
 
-  const currentHero = heroSlides[activeSlide] || heroSlides[0];
+  const currentHero = heroSlides.length > 0 ? (heroSlides[activeSlide] || heroSlides[0]) : null;
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
@@ -138,129 +138,131 @@ export function HomeClient() {
         {/* ═══════════════════════════════════════════════
             1. CINEMATIC HERO SLIDER
         ═══════════════════════════════════════════════ */}
-        <section className="relative w-full h-[45vw] min-h-[160px] sm:h-[35vw] sm:min-h-[300px] lg:h-[30vw] lg:max-h-[550px] bg-zinc-950 overflow-hidden group/hero">
-          
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSlide}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.2, ease: 'easeInOut' }}
-              className="absolute inset-0 w-full h-full"
-            >
-              {/* Background image with continuous Ken Burns zoom */}
-              <motion.div 
-                initial={{ scale: 1.08 }}
-                animate={{ scale: 1.01 }}
-                transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
+        {heroSlides.length > 0 && currentHero && (
+          <section className="relative w-full h-[45vw] min-h-[160px] sm:h-[35vw] sm:min-h-[300px] lg:h-[30vw] lg:max-h-[550px] bg-zinc-950 overflow-hidden group/hero">
+            
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSlide}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.2, ease: 'easeInOut' }}
                 className="absolute inset-0 w-full h-full"
               >
-                <OptimizedImage
-                  src={currentHero.image}
-                  alt={currentHero.title}
-                  fill
-                  priority
-                  loading="eager"
-                  className="object-cover opacity-70"
-                />
-              </motion.div>
-
-              {/* Gradient overlays */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-transparent" />
-
-              {/* Hero text content */}
-              <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-12 lg:px-20 text-white">
-                <motion.span
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  className="block font-sans text-[7px] sm:text-[10px] uppercase tracking-[0.35em] text-primary mb-1.5 sm:mb-3 font-semibold"
+                {/* Background image with continuous Ken Burns zoom */}
+                <motion.div 
+                  initial={{ scale: 1.08 }}
+                  animate={{ scale: 1.01 }}
+                  transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 w-full h-full"
                 >
-                  {currentHero.tagline}
-                </motion.span>
+                  <OptimizedImage
+                    src={currentHero.image}
+                    alt={currentHero.title}
+                    fill
+                    priority
+                    loading="eager"
+                    className="object-cover opacity-70"
+                  />
+                </motion.div>
 
-                <motion.h1
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light tracking-wider text-white leading-[1.1] max-w-lg"
-                >
-                  {currentHero.title}
-                </motion.h1>
+                {/* Gradient overlays */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-transparent" />
 
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-4 font-sans text-[10px] sm:text-xs text-zinc-300 font-light tracking-wide max-w-xs sm:max-w-sm leading-relaxed hidden sm:block"
-                >
-                  {currentHero.description}
-                </motion.p>
+                {/* Hero text content */}
+                <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-12 lg:px-20 text-white">
+                  <motion.span
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    className="block font-sans text-[7px] sm:text-[10px] uppercase tracking-[0.35em] text-primary mb-1.5 sm:mb-3 font-semibold"
+                  >
+                    {currentHero.tagline}
+                  </motion.span>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-4 sm:mt-8 flex items-center gap-4"
-                >
-                  {currentHero.link.startsWith('#') ? (
-                    <button
-                      onClick={() => {
-                        const el = document.getElementById(currentHero.link.substring(1));
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className="btn-shimmer font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-4 sm:px-8 h-8 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg"
-                    >
-                      {currentHero.btnText} <ArrowRight className="h-3 w-3" />
-                    </button>
-                  ) : (
-                    <Link href={currentHero.link}>
-                      <button className="btn-shimmer font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-4 sm:px-8 h-8 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light tracking-wider text-white leading-[1.1] max-w-lg"
+                  >
+                    {currentHero.title}
+                  </motion.h1>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    className="mt-4 font-sans text-[10px] sm:text-xs text-zinc-300 font-light tracking-wide max-w-xs sm:max-w-sm leading-relaxed hidden sm:block"
+                  >
+                    {currentHero.description}
+                  </motion.p>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    className="mt-4 sm:mt-8 flex items-center gap-4"
+                  >
+                    {currentHero.link.startsWith('#') ? (
+                      <button
+                        onClick={() => {
+                          const el = document.getElementById(currentHero.link.substring(1));
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="btn-shimmer font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-4 sm:px-8 h-8 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg"
+                      >
                         {currentHero.btnText} <ArrowRight className="h-3 w-3" />
                       </button>
-                    </Link>
+                    ) : (
+                      <Link href={currentHero.link}>
+                        <button className="btn-shimmer font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-4 sm:px-8 h-8 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg">
+                          {currentHero.btnText} <ArrowRight className="h-3 w-3" />
+                        </button>
+                      </Link>
+                    )}
+                  </motion.div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation Dot Indicators */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
+              {heroSlides.map((slide, i) => (
+                <button
+                  key={slide.id}
+                  onClick={() => setActiveSlide(i)}
+                  className={cn(
+                    'h-1.5 rounded-full transition-all duration-300 cursor-pointer',
+                    activeSlide === i ? 'w-6 bg-primary' : 'w-1.5 bg-white/40 hover:bg-white/60'
                   )}
-                </motion.div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
 
-          {/* Navigation Dot Indicators */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
-            {heroSlides.map((slide, i) => (
-              <button
-                key={slide.id}
-                onClick={() => setActiveSlide(i)}
-                className={cn(
-                  'h-1.5 rounded-full transition-all duration-300 cursor-pointer',
-                  activeSlide === i ? 'w-6 bg-primary' : 'w-1.5 bg-white/40 hover:bg-white/60'
-                )}
-                aria-label={`Go to slide ${i + 1}`}
-              />
-            ))}
-          </div>
+            {/* Left/Right controls (Shown on hover) */}
+            <button
+              onClick={() => setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover/hero:opacity-100 hidden sm:flex z-20"
+              aria-label="Previous slide"
+            >
+              ←
+            </button>
+            <button
+              onClick={() => setActiveSlide((prev) => (prev + 1) % heroSlides.length)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover/hero:opacity-100 hidden sm:flex z-20"
+              aria-label="Next slide"
+            >
+              →
+            </button>
 
-          {/* Left/Right controls (Shown on hover) */}
-          <button
-            onClick={() => setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover/hero:opacity-100 hidden sm:flex z-20"
-            aria-label="Previous slide"
-          >
-            ←
-          </button>
-          <button
-            onClick={() => setActiveSlide((prev) => (prev + 1) % heroSlides.length)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover/hero:opacity-100 hidden sm:flex z-20"
-            aria-label="Next slide"
-          >
-            →
-          </button>
-
-          {/* Thin gold line at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
-        </section>
+            {/* Thin gold line at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+          </section>
+        )}
 
 
 
