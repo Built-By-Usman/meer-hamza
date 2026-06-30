@@ -15,6 +15,7 @@ export const CATEGORIES: Category[] = [
     image: 'https://images.unsplash.com/photo-1502224562085-639556652f33?q=80&w=800&auto=format&fit=crop',
     description: 'Mystical spices, amber luxury, and warm desert breeze formulations.',
   },
+  // #helo
   {
     id: 'cat-gifts',
     name: 'Gift Sets',
