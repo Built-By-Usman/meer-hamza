@@ -38,26 +38,22 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 export function CheckoutClient() {
   const router = useRouter();
   const [step, setStep] = React.useState<1 | 2 | 3>(1);
-  const [mounted, setMounted] = React.useState(false);
 
-  const { items, subtotal, discount, shippingCost, clearCart } = useCartStore();
+  const { items, subtotal, discount, shippingCost, clearCart, _hasHydrated } = useCartStore();
   const { user } = useAuthStore();
   const createOrderMutation = useCreateOrder();
   const { data: storeSettings } = useSettings();
   const { data: savedAddress } = useMyAddress(!!user);
   const updateAddressMutation = useUpdateMyAddress();
 
-  // Set mounted state on client mount to ensure hydration is completed
+  // Only redirect to home once the Zustand store has fully rehydrated from
+  // localStorage. Without this guard, a page refresh races between the
+  // router push and the store hydration, causing an infinite loading screen.
   React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Redirect if cart is empty on mount (only after mounting/hydration is completed)
-  React.useEffect(() => {
-    if (mounted && items.length === 0 && createOrderMutation.isIdle) {
+    if (_hasHydrated && items.length === 0 && createOrderMutation.isIdle) {
       router.push('/');
     }
-  }, [mounted, items, router, createOrderMutation]);
+  }, [_hasHydrated, items, router, createOrderMutation]);
 
   // Form initialization with React Hook Form
   const {
@@ -158,7 +154,9 @@ export function CheckoutClient() {
     });
   };
 
-  if (!mounted || (items.length === 0 && createOrderMutation.isIdle)) {
+  // Show loader while Zustand is still reading from localStorage,
+  // or while the order is being placed (step 3 handled inside JSX).
+  if (!_hasHydrated) {
     return <Loader fullPage />;
   }
 

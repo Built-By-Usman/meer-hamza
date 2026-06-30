@@ -28,10 +28,15 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     total,
     updateQuantity,
     removeFromCart,
+    _hasHydrated,
   } = useCartStore();
   const { data: storeSettings } = useSettings();
 
-  const baseShipping = storeSettings !== undefined ? storeSettings.delivery_charges : shippingCost;
+  // Only use live API delivery_charges once the store has hydrated from localStorage.
+  // Before hydration, shippingCost from the store is 0 (initial), so we show nothing.
+  const baseShipping = _hasHydrated
+    ? (storeSettings !== undefined ? storeSettings.delivery_charges : shippingCost)
+    : shippingCost;
   const minOrderForFree = storeSettings?.min_order_amount || 0;
   const finalShippingCost = (minOrderForFree > 0 && subtotal >= minOrderForFree) ? 0 : baseShipping;
   const finalTotal = Math.max(0, parseFloat((subtotal - discount + finalShippingCost).toFixed(2)));

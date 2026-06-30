@@ -10,6 +10,7 @@ export interface CartState {
   tax: number;
   shippingCost: number;
   total: number;
+  _hasHydrated: boolean;
   addToCart: (product: Product, variant?: ProductVariant, quantity?: number) => void;
   removeFromCart: (productId: string, variantId?: string) => void;
   updateQuantity: (productId: string, quantity: number, variantId?: string) => void;
@@ -66,6 +67,7 @@ export const useCartStore = create<CartState>()(
       tax: 0,
       shippingCost: 0,
       total: 0,
+      _hasHydrated: false,
 
       addToCart: (product, variant, quantity = 1) => {
         const { items, coupon } = get();
@@ -165,6 +167,10 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: 'premium-cart-storage',
+      onRehydrateStorage: () => (state) => {
+        // Called once localStorage has been read and state has been restored
+        if (state) state._hasHydrated = true;
+      },
     }
   )
 );
