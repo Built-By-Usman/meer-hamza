@@ -4,7 +4,7 @@ import { Footer } from '@/features/shared/components/Footer';
 
 export const metadata: Metadata = {
   title: "Contact Us | Timeless by Meer - Luxury Perfumes Pakistan",
-  description: "Get in touch with Timeless by Meer. Visit our store in Sargodha, Punjab or contact us via phone or email for orders, scent consultation, and support.",
+  description: "Get in touch with Timeless by Meer. Visit our store on University Road, Sargodha, Punjab or call +92 321 1648089 for orders, support, and inquiries.",
   alternates: {
     canonical: "https://timelessbymeer.com/contact"
   }
@@ -13,19 +13,48 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Timeless by Meer",
-    "image": "https://timelessbymeer.com/logo.png",
-    "telephone": "+923001234567",
-    "email": "support@timelessbymeer.com",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Flagship Fragrance Store, Sargodha Road",
-      "addressLocality": "Sargodha",
-      "addressRegion": "Punjab",
-      "addressCountry": "PK"
-    },
-    "url": "https://timelessbymeer.com/contact"
+    "@graph": [
+      {
+        "@type": "ContactPage",
+        "@id": "https://timelessbymeer.com/contact/#webpage",
+        "url": "https://timelessbymeer.com/contact",
+        "name": "Contact Us | Timeless by Meer",
+        "description": "Contact details and flagship store location for Timeless by Meer in Sargodha, Pakistan."
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://timelessbymeer.com/#localbusiness",
+        "name": "Timeless by Meer",
+        "image": "https://timelessbymeer.com/logo.png",
+        "telephone": "+923211648089",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "University Road",
+          "addressLocality": "Sargodha",
+          "addressRegion": "Punjab",
+          "addressCountry": "PK"
+        },
+        "url": "https://timelessbymeer.com/contact"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://timelessbymeer.com/contact/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://timelessbymeer.com"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Contact Us",
+            "item": "https://timelessbymeer.com/contact"
+          }
+        ]
+      }
+    ]
   };
 
   return (
@@ -36,7 +65,7 @@ export default function ContactPage() {
       />
       <Header />
       <main className="flex-1 bg-background text-foreground py-16 px-6 max-w-4xl mx-auto font-sans">
-        <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-wide text-center mb-8 border-b pb-4">
+        <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-wide text-center mb-8 border-b border-primary/20 pb-4 text-white">
           Contact Us
         </h1>
         
@@ -46,16 +75,15 @@ export default function ContactPage() {
               Flagship House
             </h2>
             <p className="font-light text-sm leading-relaxed">
-              Timeless by Meer Fragrances<br />
-              Sargodha City, Punjab, Pakistan
+              Timeless by Meer<br />
+              University Road, Sargodha, Punjab, Pakistan
             </p>
             
             <h2 className="font-serif text-2xl text-white font-normal pt-4">
               Direct Relations
             </h2>
             <p className="font-light text-sm leading-relaxed">
-              <strong>Email:</strong> support@timelessbymeer.com<br />
-              <strong>WhatsApp / Support:</strong> +92 300 1234567<br />
+              <strong>WhatsApp / Support:</strong> <a href="tel:+923211648089" className="text-primary hover:text-white transition-colors font-bold">+92 321 1648089</a><br />
               <strong>Hours:</strong> Mon - Sat, 11:00 AM - 9:00 PM (PKT)
             </p>
           </div>

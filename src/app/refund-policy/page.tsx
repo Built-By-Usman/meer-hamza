@@ -38,7 +38,7 @@ export default function RefundPolicyPage() {
           </p>
           <h2 className="font-serif text-xl text-white font-normal mt-6">Contact Us</h2>
           <p>
-            To initiate a return or replacement, please contact our relations team at support@timelessbymeer.com or WhatsApp us at +92 300 1234567 with your order number and photographs of the received items.
+            To initiate a return or replacement, please contact our relations team via WhatsApp or call us at <a href="tel:+923211648089" className="text-primary hover:text-white transition-colors font-bold underline">+92 321 1648089</a> with your order number and photographs of the received items.
           </p>
         </div>
       </main>
