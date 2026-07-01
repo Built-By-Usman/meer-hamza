@@ -67,9 +67,9 @@ export function CheckoutClient() {
     defaultValues: {
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
-      country: 'PK',
-      state: 'Punjab',
-      zipCode: '54000',
+      country: '',
+      state: '',
+      zipCode: '',
     },
   });
 
@@ -80,9 +80,9 @@ export function CheckoutClient() {
       setValue('lastName', savedAddress.lastName || '');
       setValue('addressLine1', savedAddress.addressLine1 || '');
       setValue('city', savedAddress.city || '');
-      setValue('state', savedAddress.state || 'Punjab');
-      setValue('zipCode', savedAddress.zipCode || '54000');
-      setValue('country', savedAddress.country || 'PK');
+      setValue('state', savedAddress.state || '');
+      setValue('zipCode', savedAddress.zipCode || '');
+      setValue('country', savedAddress.country || '');
       setValue('phone', savedAddress.phone || '');
     }
   }, [savedAddress, setValue]);
