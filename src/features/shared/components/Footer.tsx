@@ -11,8 +11,21 @@ export function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col items-center">
         
         {/* Brand Logo Centered */}
-        <div className="mb-12 border border-primary/20 rounded-2xl bg-[#09090b] py-4 px-6 shadow-xl text-center">
+        <div className="mb-4 border border-primary/20 rounded-2xl bg-[#09090b] py-4 px-6 shadow-xl text-center">
           <TimelessByMeer size="sm" />
+        </div>
+
+        {/* Developer Credits (Prominent Position) */}
+        <div className="mb-12 text-sm text-zinc-400 font-sans tracking-wider text-center">
+          Designed & Developed by{' '}
+          <a
+            href="https://builtbyusman.tech"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:text-white font-bold transition-colors underline decoration-primary/30 hover:decoration-white"
+          >
+            Muhammad Usman
+          </a>
         </div>
 
         {/* Columns Grid */}
@@ -100,23 +113,11 @@ export function Footer() {
 
         </div>
 
-        {/* Footer Bottom Credentials */}
-        <div className="w-full flex flex-col sm:flex-row items-center justify-between pt-8 gap-4 text-center sm:text-left text-zinc-500">
+        {/* Footer Bottom Copyright */}
+        <div className="w-full text-center pt-8 text-zinc-500">
           <p className="text-[10px] tracking-widest uppercase font-light">
             © 2026 TIMELESS BY MEER. ALL RIGHTS RESERVED.
           </p>
-
-          <div className="text-xs font-light tracking-wide">
-            Designed & Developed by{' '}
-            <a
-              href="https://builtbyusman.tech"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:text-white font-semibold transition-colors underline"
-            >
-              Muhammad Usman
-            </a>
-          </div>
         </div>
       </div>
     </footer>
