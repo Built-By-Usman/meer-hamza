@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Header } from '@/features/shared/components/Header';
 import { Footer } from '@/features/shared/components/Footer';
+import { Sparkles, Calendar, User, ArrowLeft } from 'lucide-react';
 
 interface BlogPost {
   slug: string;
@@ -117,32 +118,49 @@ export default async function BlogPostPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main className="flex-1 bg-background text-foreground py-16 px-6 max-w-3xl mx-auto font-sans">
-        <div className="mb-6">
-          <Link href="/blog" className="text-zinc-500 hover:text-white transition-colors text-xs uppercase tracking-widest font-bold">
-            ← Back to Blog
+      
+      <main className="min-h-screen bg-[#050505] text-foreground font-sans pb-16">
+        
+        {/* Back navigation header */}
+        <div className="max-w-3xl mx-auto px-6 pt-10 text-left">
+          <Link href="/blog" className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors text-xs uppercase tracking-widest font-bold group">
+            <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" /> Back to Blog
           </Link>
         </div>
-        
-        <article className="space-y-6">
-          <header className="space-y-4">
-            <span className="text-[10px] uppercase tracking-wider text-primary font-medium">{post.publishDate} · Written by {post.author}</span>
-            <h1 className="font-serif text-3xl sm:text-4xl text-white font-light tracking-wide leading-tight">
+
+        {/* Article content */}
+        <article className="max-w-3xl mx-auto px-6 py-8 space-y-6">
+          <header className="space-y-4 text-left">
+            <div className="flex items-center gap-4 text-[10px] text-zinc-500 font-semibold uppercase tracking-wider">
+              <span className="flex items-center gap-1"><Calendar className="h-3 w-3 text-primary" /> {post.publishDate}</span>
+              <span className="flex items-center gap-1"><User className="h-3 w-3 text-primary" /> Written by {post.author}</span>
+            </div>
+            
+            <h1 className="font-serif text-3xl sm:text-5xl text-white font-light tracking-wide leading-tight">
               {post.title}
             </h1>
           </header>
           
-          <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-secondary my-8">
+          {/* Main Visual */}
+          <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl my-8">
             <img src={post.image} alt={post.title} className="object-cover w-full h-full opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           </div>
           
-          <div className="text-zinc-300 font-light text-sm sm:text-base leading-relaxed space-y-6">
+          {/* Body Content with Styled Drop-Cap */}
+          <div className="text-zinc-300 font-light text-sm sm:text-base leading-relaxed space-y-6 text-left">
             {post.content.split('\n\n').map((paragraph, idx) => (
-              <p key={idx}>{paragraph}</p>
+              <p 
+                key={idx} 
+                className={idx === 0 ? "first-letter:text-5xl first-letter:font-serif first-letter:font-bold first-letter:text-primary first-letter:float-left first-letter:mr-3 first-letter:mt-1.5 first-letter:leading-none" : ""}
+              >
+                {paragraph}
+              </p>
             ))}
           </div>
         </article>
       </main>
+
       <Footer />
     </>
   );

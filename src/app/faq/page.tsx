@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Header } from '@/features/shared/components/Header';
 import { Footer } from '@/features/shared/components/Footer';
 import { FaqClient } from './FaqClient';
+import { Sparkles } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions (FAQ) | Timeless by Meer",
@@ -18,7 +19,7 @@ const FAQS = [
   },
   {
     question: "Where is Timeless by Meer located?",
-    answer: "Our flagship design house and operations are based in the historic city of Sargodha, Punjab, Pakistan."
+    answer: "Our flagship design house and operations are based on University Road, Sargodha, Punjab, Pakistan."
   },
   {
     question: "Does Timeless by Meer deliver across Pakistan?",
@@ -115,16 +116,32 @@ export default function FaqPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main className="flex-1 bg-background text-foreground py-16 px-6 max-w-4xl mx-auto">
-        <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-wide text-center mb-4">
-          Frequently Asked Questions
-        </h1>
-        <p className="font-sans text-xs sm:text-sm text-zinc-400 font-light tracking-wide text-center mb-12 max-w-md mx-auto">
-          Everything you need to know about our luxury perfumes, custom packaging, order shipments, and customer services.
-        </p>
+      
+      <main className="min-h-screen bg-[#050505] text-foreground font-sans pb-16">
         
-        <FaqClient faqs={FAQS} />
+        {/* Banner Section */}
+        <section className="relative h-[250px] bg-zinc-950 flex flex-col justify-center items-center px-6 overflow-hidden border-b border-primary/10 mb-12">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/80 to-[#050505] z-10" />
+          <div className="absolute inset-0 bg-cover bg-center opacity-25 z-0" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1800')" }} />
+          
+          <div className="relative z-20 text-center space-y-3">
+            <span className="text-[9px] uppercase tracking-[0.35em] font-bold text-primary flex items-center justify-center gap-2">
+              <Sparkles className="h-3 w-3 fill-primary text-primary" /> Concierge Services
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-serif font-light text-white tracking-widest uppercase">
+              FAQ
+            </h1>
+            <div className="h-[1px] w-16 bg-primary/40 mx-auto mt-2" />
+          </div>
+        </section>
+
+        {/* Accordion Wrapper */}
+        <section className="max-w-4xl mx-auto px-6">
+          <FaqClient faqs={FAQS} />
+        </section>
+
       </main>
+
       <Footer />
     </>
   );
