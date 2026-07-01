@@ -72,7 +72,7 @@ export function FragranceQuizModal({ isOpen, onClose }: FragranceQuizModalProps)
 
   const handleNavigateToResult = () => {
     if (!result) return;
-    router.push(`/product/${result.slug}`);
+    router.push(`/products/${result.slug}`);
     onClose();
     resetQuiz();
   };

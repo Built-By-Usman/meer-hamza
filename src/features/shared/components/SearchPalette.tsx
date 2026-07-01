@@ -82,7 +82,7 @@ export function SearchPalette({ isOpen, onClose }: SearchPaletteProps) {
   const goToProduct = (slug: string, name: string) => {
     saveSearch(name);
     onClose();
-    router.push(`/product/${slug}`);
+    router.push(`/products/${slug}`);
   };
 
   const goToSearch = (term: string) => {

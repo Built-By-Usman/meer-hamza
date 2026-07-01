@@ -17,7 +17,7 @@ export function MobileBottomNav() {
   const cartCount = useCartStore((s) => s.items.reduce((a, i) => a + i.quantity, 0));
 
   // Hide bottom navigation on product details pages to avoid overlap with sticky purchase bar
-  if (pathname.startsWith('/product/')) {
+  if (pathname.startsWith('/products/') && pathname !== '/products') {
     return null;
   }
 

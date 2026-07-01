@@ -1,6 +1,4 @@
-import { ProductClient } from '@/features/product/components/ProductClient';
-
-export const revalidate = 30;
+import { permanentRedirect } from 'next/navigation';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -8,6 +6,5 @@ interface PageProps {
 
 export default async function ProductPage({ params }: PageProps) {
   const { id } = await params;
-  
-  return <ProductClient slug={id} />;
+  permanentRedirect(`/products/${id}`);
 }

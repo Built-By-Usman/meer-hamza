@@ -34,11 +34,56 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "TIMELESS BY MEER | Luxury Perfumes & Fragrances",
-  description: "Exquisite scent collections crafted for the sophisticated mind. Experience the premium luxury fragrances of TIMELESS BY MEER.",
+  metadataBase: new URL("https://timelessbymeer.com"),
+  title: {
+    default: "Timeless by Meer | Luxury Perfumes & Fragrances Store Pakistan",
+    template: "%s | Timeless by Meer"
+  },
+  description: "Experience Pakistan's premium luxury perfume brand by Meer Hamza. Shop original, long-lasting signature fragrances crafted in Sargodha, Punjab. Nationwide express delivery.",
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.png",
+  },
+  keywords: [
+    "Timeless by Meer", "Timeless Perfumes", "Meer Hamza Perfumes", "Luxury Perfumes Pakistan",
+    "Premium Perfumes Pakistan", "Best Perfumes Pakistan", "Online Perfume Store Pakistan",
+    "Long Lasting Perfumes Pakistan", "Sargodha Perfume Store", "Pakistani Perfume Brand"
+  ],
+  alternates: {
+    canonical: "/"
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    title: "Timeless by Meer | Luxury Perfumes & Fragrances Store Pakistan",
+    description: "Experience Pakistan's premium luxury perfume brand by Meer Hamza. Shop original, long-lasting signature fragrances crafted in Sargodha, Punjab. Nationwide express delivery.",
+    url: "https://timelessbymeer.com",
+    siteName: "Timeless by Meer",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Timeless by Meer Logo"
+      }
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Timeless by Meer | Luxury Perfumes & Fragrances Store Pakistan",
+    description: "Experience Pakistan's premium luxury perfume brand by Meer Hamza. Shop original, long-lasting signature fragrances crafted in Sargodha, Punjab. Nationwide express delivery.",
+    images: ["/logo.png"],
   },
 };
 

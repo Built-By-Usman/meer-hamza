@@ -95,7 +95,7 @@ export function CategoryClient({ slug }: CategoryClientProps) {
 
     return (
       <div
-        onClick={() => router.push(`/product/${product.slug}`)}
+        onClick={() => router.push(`/products/${product.slug}`)}
         className="flex flex-col sm:flex-row border rounded-xl overflow-hidden bg-card hover:shadow-md transition-all duration-300 cursor-pointer text-left"
       >
         <div className="relative aspect-square sm:h-48 sm:w-48 bg-secondary flex-shrink-0">

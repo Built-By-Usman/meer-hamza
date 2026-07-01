@@ -74,7 +74,7 @@ export const ProductCard = React.memo(function ProductCard({ product, index = 0 
     );
   };
 
-  const handleCardClick = () => router.push(`/product/${product.slug}`);
+  const handleCardClick = () => router.push(`/products/${product.slug}`);
 
   const animDelay = `${index * 70}ms`;
 
