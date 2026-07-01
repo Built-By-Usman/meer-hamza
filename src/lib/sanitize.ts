@@ -1,3 +1,4 @@
+import { defaultShouldDehydrateQuery } from '@tanstack/react-query';
 import DOMPurify from 'dompurify';
 
 /**
@@ -15,7 +16,8 @@ export function sanitizeHTML(dirty: string): string {
       .replace(/'/g, '&#x27;')
       .replace(/\//g, '&#x2F;');
   }
-  
+
   // Client-side: use DOMPurify to strip malicious scripts and payloads
   return DOMPurify.sanitize(dirty);
 }
+// defaultShouldDehydrateQuery
