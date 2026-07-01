@@ -47,15 +47,20 @@ export class ApiOrderRepository implements IOrderRepository {
       phone: apiOrder.shipping_address?.phone || '',
     };
 
+    const totalAmount = Number(apiOrder.total_amount);
+    const subtotalVal = Number(apiOrder.subtotal || totalAmount);
+    const discountVal = Number(apiOrder.discount || 0);
+    const shippingCostVal = Number(apiOrder.shipping_cost || 0);
+
     return {
       id: apiOrder.id,
       userId: '',
       items,
-      subtotal: Number(apiOrder.total_amount) - (Number(apiOrder.total_amount) * 0.08),
-      discount: 0,
-      tax: Number(apiOrder.total_amount) * 0.08,
-      shippingCost: 0,
-      total: Number(apiOrder.total_amount),
+      subtotal: subtotalVal + discountVal,
+      discount: discountVal,
+      tax: 0,
+      shippingCost: shippingCostVal,
+      total: totalAmount,
       shippingAddress: address,
       billingAddress: address,
       shippingMethod: 'Express Shipping',

@@ -24,33 +24,36 @@ const FREE_SHIPPING_THRESHOLD = 0; // Free shipping threshold (0 means disabled)
 const STANDARD_SHIPPING_COST = 250;
 
 const calculateTotals = (items: OrderItem[], coupon: Coupon | null) => {
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const originalSubtotal = items.reduce((sum, item) => sum + (item.originalPrice ?? item.price) * item.quantity, 0);
+  const sellingSubtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   
-  let discount = 0;
-  let shippingCost = subtotal > 0 ? STANDARD_SHIPPING_COST : 0;
+  let couponDiscount = 0;
+  let shippingCost = sellingSubtotal > 0 ? STANDARD_SHIPPING_COST : 0;
 
   if (coupon) {
     if (coupon.code === 'FREESHIP') {
       shippingCost = 0;
     } else if (coupon.type === 'percentage') {
-      discount = subtotal * (coupon.value / 100);
+      couponDiscount = sellingSubtotal * (coupon.value / 100);
     } else if (coupon.type === 'fixed') {
-      discount = Math.min(coupon.value, subtotal);
+      couponDiscount = Math.min(coupon.value, sellingSubtotal);
     }
   }
 
+  const totalDiscount = (originalSubtotal - sellingSubtotal) + couponDiscount;
+
   // Free shipping threshold check (after regular discount)
-  if (FREE_SHIPPING_THRESHOLD > 0 && subtotal - discount >= FREE_SHIPPING_THRESHOLD) {
+  if (FREE_SHIPPING_THRESHOLD > 0 && sellingSubtotal - couponDiscount >= FREE_SHIPPING_THRESHOLD) {
     shippingCost = 0;
   }
 
-  const taxableAmount = Math.max(0, subtotal - discount);
+  const taxableAmount = Math.max(0, sellingSubtotal - couponDiscount);
   const tax = parseFloat((taxableAmount * TAX_RATE).toFixed(2));
   const total = parseFloat((taxableAmount + tax + shippingCost).toFixed(2));
 
   return {
-    subtotal: parseFloat(subtotal.toFixed(2)),
-    discount: parseFloat(discount.toFixed(2)),
+    subtotal: parseFloat(originalSubtotal.toFixed(2)),
+    discount: parseFloat(totalDiscount.toFixed(2)),
     tax,
     shippingCost,
     total,
@@ -75,6 +78,7 @@ export const useCartStore = create<CartState>()(
         const variantId = variant?.id;
         const sku = variant?.sku || product.id;
         const price = variant?.price !== undefined ? variant.price : product.basePrice;
+        const originalPrice = variant?.originalPrice !== undefined ? variant.originalPrice : product.originalPrice;
         const image = variant?.images?.[0] || product.images[0];
         const name = product.name;
 
@@ -104,6 +108,7 @@ export const useCartStore = create<CartState>()(
             name,
             sku,
             price,
+            originalPrice,
             quantity,
             image,
             attributes,

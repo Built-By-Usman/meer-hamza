@@ -109,6 +109,7 @@ export interface OrderItem {
   name: string;
   sku: string;
   price: number;
+  originalPrice?: number;
   quantity: number;
   image: string;
   attributes?: Record<string, string>;
