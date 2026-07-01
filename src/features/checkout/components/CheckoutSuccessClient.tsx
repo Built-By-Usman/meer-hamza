@@ -78,14 +78,28 @@ export function CheckoutSuccessClient() {
                 <span className="flex items-center gap-1.5"><ShoppingBag className="h-4 w-4" /> Order Overview</span>
                 <span>ID: #{order.id.slice(0, 8).toUpperCase()}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Fragrance:</span>
-                <span className="font-semibold text-zinc-900 truncate max-w-[180px]">{order.items[0]?.name}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Quantity & Size:</span>
-                <span className="font-semibold text-zinc-900">{order.items[0]?.quantity} x {order.items[0]?.attributes?.volume || '100 ml'}</span>
-              </div>
+              {order.items.map((item, idx) => (
+                <div key={idx} className="border-b border-border/10 pb-2.5 last:border-none last:pb-0 space-y-1">
+                  <div className="flex justify-between">
+                    <span>Fragrance:</span>
+                    <span className="font-semibold text-zinc-900 truncate max-w-[180px]">{item.name}</span>
+                  </div>
+                  {item.attributes && Object.keys(item.attributes).length > 0 && (
+                    <div className="flex justify-between text-[10px] text-zinc-500">
+                      <span>Variant:</span>
+                      <span>
+                        {Object.entries(item.attributes)
+                          .map(([k, v]) => `${k}: ${v}`)
+                          .join(', ')}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span>Quantity & Unit Price:</span>
+                    <span className="font-semibold text-zinc-900">{item.quantity} x {formatPrice(item.price)}</span>
+                  </div>
+                </div>
+              ))}
               <div className="flex justify-between border-t pt-2.5 text-zinc-950 font-bold text-sm">
                 <span>Paid Total:</span>
                 <span>{formatPrice(order.total)}</span>

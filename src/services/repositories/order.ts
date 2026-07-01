@@ -23,14 +23,26 @@ export interface IOrderRepository {
 
 export class ApiOrderRepository implements IOrderRepository {
   private mapOrder(apiOrder: any): Order {
-    const items: OrderItem[] = (apiOrder.items || []).map((item: any) => ({
-      productId: item.product_id,
-      name: item.product_name,
-      sku: item.product_id,
-      price: Number(item.unit_price),
-      quantity: item.quantity,
-      image: '',
-    }));
+    const items: OrderItem[] = (apiOrder.items || []).map((item: any) => {
+      const attributes: Record<string, string> = {};
+      if (item.variant) {
+        item.variant.split(', ').forEach((part: string) => {
+          const [key, val] = part.split(': ');
+          if (key && val) {
+            attributes[key] = val;
+          }
+        });
+      }
+      return {
+        productId: String(item.product_id),
+        name: item.product_name,
+        sku: String(item.product_id),
+        price: Number(item.unit_price),
+        quantity: item.quantity,
+        image: item.product_image || '',
+        attributes: Object.keys(attributes).length > 0 ? attributes : undefined
+      };
+    });
 
     const [firstName = '', ...lastNameParts] = (apiOrder.shipping_address?.full_name || '').split(' ');
     const lastName = lastNameParts.join(' ');
@@ -82,10 +94,19 @@ export class ApiOrderRepository implements IOrderRepository {
       phone: orderInput.shippingAddress.phone,
     };
 
-    const mappedItems = orderInput.items.map(item => ({
-      product_id: item.productId,
-      quantity: item.quantity,
-    }));
+    const mappedItems = orderInput.items.map(item => {
+      let variantStr: string | null = null;
+      if (item.attributes && Object.keys(item.attributes).length > 0) {
+        variantStr = Object.entries(item.attributes)
+          .map(([key, val]) => `${key}: ${val}`)
+          .join(', ');
+      }
+      return {
+        product_id: Number(item.productId),
+        quantity: item.quantity,
+        variant: variantStr
+      };
+    });
 
     const response = await apiClient.post<any>('/orders', {
       shipping_address: mappedAddress,

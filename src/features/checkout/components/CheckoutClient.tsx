@@ -305,6 +305,13 @@ export function CheckoutClient() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-foreground truncate">{item.name}</p>
+                        {item.attributes && Object.keys(item.attributes).length > 0 && (
+                          <p className="text-[10px] text-muted-foreground font-medium">
+                            {Object.entries(item.attributes)
+                              .map(([k, v]) => `${k}: ${v}`)
+                              .join(' · ')}
+                          </p>
+                        )}
                         <p className="text-muted-foreground mt-0.5">Qty: {item.quantity} · {formatPrice(item.price * item.quantity)}</p>
                       </div>
                     </div>
