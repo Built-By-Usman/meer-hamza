@@ -173,6 +173,7 @@ export function HomeClient() {
                           priority
                           loading="eager"
                           className="object-cover opacity-100"
+                          sizes="100vw"
                         />
                       </motion.div>
                     </button>
@@ -191,6 +192,7 @@ export function HomeClient() {
                           priority
                           loading="eager"
                           className="object-cover opacity-100"
+                          sizes="100vw"
                         />
                       </motion.div>
                     </Link>
@@ -211,6 +213,7 @@ export function HomeClient() {
                         priority
                         loading="eager"
                         className="object-cover opacity-70"
+                        sizes="100vw"
                       />
                     </motion.div>
 

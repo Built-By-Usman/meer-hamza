@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
-const BACKEND_URL = 'https://backend.timelessbymeer.com';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === 'production'
+  ? 'https://backend.timelessbymeer.com'
+  : 'http://localhost:8000');
 
 const nextConfig: NextConfig = {
   compress: true,
