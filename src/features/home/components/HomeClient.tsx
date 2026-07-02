@@ -123,18 +123,7 @@ export function HomeClient() {
         };
       });
     }
-    return HERO_SLIDES.map((s) => ({
-      id: s.id,
-      tagline: s.tagline,
-      title: s.title,
-      description: s.description,
-      desktopImageUrl: s.image,
-      tabletImageUrl: s.image,
-      mobileImageUrl: s.image,
-      altText: s.title || 'Maison Fragrance Campaign Banner',
-      link: s.link,
-      btnText: s.btnText,
-    }));
+    return [];
   }, [dynamicBannersData]);
 
   // Auto-play slides every 6.5 seconds

@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { Cinzel, Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/features/shared/components/Providers";
-import { MobileBottomNav } from "@/features/shared/components/MobileBottomNav";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
