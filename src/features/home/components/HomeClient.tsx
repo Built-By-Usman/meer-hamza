@@ -115,7 +115,7 @@ export function HomeClient() {
         btnText: b.title ? 'Shop Collection' : '',
       }));
     }
-    return [];
+    return HERO_SLIDES;
   }, [dynamicBannersData]);
 
   // Auto-play slides every 6.5 seconds
@@ -147,7 +147,7 @@ export function HomeClient() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.2, ease: 'easeInOut' }}
+                transition={{ duration: 0.5, ease: 'easeInOut' }}
                 className="absolute inset-0 w-full h-full"
               >
                 {/* Clean Image / Clickable banner vs Cinematic text overlay */}
