@@ -105,17 +105,36 @@ export function HomeClient() {
   const heroSlides = React.useMemo(() => {
     const activeBanners = (dynamicBannersData || []).filter((b: any) => b.is_active);
     if (activeBanners.length > 0) {
-      return activeBanners.map((b: any) => ({
-        id: b.id,
-        tagline: b.subtitle || (b.title ? 'Private Collection' : ''),
-        title: b.title || '',
-        description: b.title ? 'Experience the exquisite aroma of our selected collections.' : '',
-        image: b.image_url,
-        link: '#catalog-section',
-        btnText: b.title ? 'Shop Collection' : '',
-      }));
+      return activeBanners.map((b: any) => {
+        const desk = b.desktop_image_url;
+        const tab = b.tablet_image_url || desk;
+        const mob = b.mobile_image_url || tab || desk;
+        return {
+          id: b.id,
+          tagline: b.subtitle || (b.title ? 'Private Collection' : ''),
+          title: b.title || '',
+          description: b.title ? 'Experience the exquisite aroma of our selected collections.' : '',
+          desktopImageUrl: desk,
+          tabletImageUrl: tab,
+          mobileImageUrl: mob,
+          altText: b.alt_text || b.title || 'Maison Fragrance Campaign Banner',
+          link: '#catalog-section',
+          btnText: b.title ? 'Shop Collection' : '',
+        };
+      });
     }
-    return HERO_SLIDES;
+    return HERO_SLIDES.map((s) => ({
+      id: s.id,
+      tagline: s.tagline,
+      title: s.title,
+      description: s.description,
+      desktopImageUrl: s.image,
+      tabletImageUrl: s.image,
+      mobileImageUrl: s.image,
+      altText: s.title || 'Maison Fragrance Campaign Banner',
+      link: s.link,
+      btnText: s.btnText,
+    }));
   }, [dynamicBannersData]);
 
   // Auto-play slides every 6.5 seconds
@@ -139,7 +158,7 @@ export function HomeClient() {
             1. CINEMATIC HERO SLIDER
         ═══════════════════════════════════════════════ */}
         {heroSlides.length > 0 && currentHero && (
-          <section className="relative w-full h-[45vw] min-h-[160px] sm:h-[35vw] sm:min-h-[300px] lg:h-[30vw] lg:max-h-[550px] bg-zinc-950 overflow-hidden group/hero">
+          <section className="relative w-full h-[125vw] min-h-[300px] sm:h-[50vw] sm:min-h-[400px] lg:h-[30vw] lg:max-h-[550px] bg-zinc-950 overflow-hidden group/hero">
             
             <AnimatePresence mode="wait">
               <motion.div
@@ -166,15 +185,16 @@ export function HomeClient() {
                         transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
                         className="absolute inset-0 w-full h-full"
                       >
-                        <OptimizedImage
-                          src={currentHero.image}
-                          alt="Banner"
-                          fill
-                          priority
-                          loading="eager"
-                          className="object-cover opacity-100"
-                          sizes="100vw"
-                        />
+                        <picture className="absolute inset-0 w-full h-full">
+                          <source media="(max-width: 640px)" srcSet={currentHero.mobileImageUrl} />
+                          <source media="(max-width: 1024px)" srcSet={currentHero.tabletImageUrl} />
+                          <img
+                            src={currentHero.desktopImageUrl}
+                            alt={currentHero.altText}
+                            loading={activeSlide === 0 ? "eager" : "lazy"}
+                            className="w-full h-full object-cover opacity-100"
+                          />
+                        </picture>
                       </motion.div>
                     </button>
                   ) : (
@@ -185,15 +205,16 @@ export function HomeClient() {
                         transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
                         className="absolute inset-0 w-full h-full"
                       >
-                        <OptimizedImage
-                          src={currentHero.image}
-                          alt="Banner"
-                          fill
-                          priority
-                          loading="eager"
-                          className="object-cover opacity-100"
-                          sizes="100vw"
-                        />
+                        <picture className="absolute inset-0 w-full h-full">
+                          <source media="(max-width: 640px)" srcSet={currentHero.mobileImageUrl} />
+                          <source media="(max-width: 1024px)" srcSet={currentHero.tabletImageUrl} />
+                          <img
+                            src={currentHero.desktopImageUrl}
+                            alt={currentHero.altText}
+                            loading={activeSlide === 0 ? "eager" : "lazy"}
+                            className="w-full h-full object-cover opacity-100"
+                          />
+                        </picture>
                       </motion.div>
                     </Link>
                   )
@@ -206,15 +227,16 @@ export function HomeClient() {
                       transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
                       className="absolute inset-0 w-full h-full"
                     >
-                      <OptimizedImage
-                        src={currentHero.image}
-                        alt={currentHero.title}
-                        fill
-                        priority
-                        loading="eager"
-                        className="object-cover opacity-70"
-                        sizes="100vw"
-                      />
+                      <picture className="absolute inset-0 w-full h-full">
+                        <source media="(max-width: 640px)" srcSet={currentHero.mobileImageUrl} />
+                        <source media="(max-width: 1024px)" srcSet={currentHero.tabletImageUrl} />
+                        <img
+                          src={currentHero.desktopImageUrl}
+                          alt={currentHero.altText}
+                          loading={activeSlide === 0 ? "eager" : "lazy"}
+                          className="w-full h-full object-cover opacity-70"
+                        />
+                      </picture>
                     </motion.div>
 
                     {/* Gradient overlays */}
