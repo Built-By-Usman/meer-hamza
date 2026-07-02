@@ -6,7 +6,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export class MockAuthRepository implements IAuthRepository {
   private latency = 500;
-
+// ada
   async login(email: string, password: string): Promise<LoginResponse> {
     await delay(this.latency);
     
