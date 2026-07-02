@@ -181,7 +181,7 @@ export function HomeClient() {
                             src={currentHero.desktopImageUrl}
                             alt={currentHero.altText}
                             loading={activeSlide === 0 ? "eager" : "lazy"}
-                            className="w-full h-full object-cover opacity-100"
+                            className="w-full h-full object-contain sm:object-cover object-center opacity-100"
                           />
                         </picture>
                       </motion.div>
@@ -201,7 +201,7 @@ export function HomeClient() {
                             src={currentHero.desktopImageUrl}
                             alt={currentHero.altText}
                             loading={activeSlide === 0 ? "eager" : "lazy"}
-                            className="w-full h-full object-cover opacity-100"
+                            className="w-full h-full object-contain sm:object-cover object-center opacity-100"
                           />
                         </picture>
                       </motion.div>
@@ -223,7 +223,7 @@ export function HomeClient() {
                           src={currentHero.desktopImageUrl}
                           alt={currentHero.altText}
                           loading={activeSlide === 0 ? "eager" : "lazy"}
-                          className="w-full h-full object-cover opacity-70"
+                          className="w-full h-full object-contain sm:object-cover object-center opacity-70"
                         />
                       </picture>
                     </motion.div>
