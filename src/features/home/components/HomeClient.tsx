@@ -147,7 +147,7 @@ export function HomeClient() {
             1. CINEMATIC HERO SLIDER
         ═══════════════════════════════════════════════ */}
         {heroSlides.length > 0 && currentHero && (
-          <section className="relative w-full h-[75vw] min-h-[300px] sm:h-[50vw] sm:min-h-[400px] lg:h-[30vw] lg:max-h-[550px] bg-zinc-950 overflow-hidden group/hero">
+          <section className="relative w-full h-[300px] sm:h-[420px] lg:h-[550px] bg-zinc-950 overflow-hidden group/hero">
             
             <AnimatePresence mode="wait">
               <motion.div
