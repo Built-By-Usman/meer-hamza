@@ -147,7 +147,7 @@ export function HomeClient() {
             1. CINEMATIC HERO SLIDER
         ═══════════════════════════════════════════════ */}
         {heroSlides.length > 0 && currentHero && (
-          <section className="relative w-full h-[250px] sm:h-[420px] lg:h-[550px] bg-zinc-950 overflow-hidden group/hero">
+          <section className="relative w-full h-[250px] sm:h-[420px] lg:h-[550px] overflow-hidden group/hero">
             
             <AnimatePresence mode="wait">
               <motion.div
@@ -181,7 +181,7 @@ export function HomeClient() {
                             src={currentHero.desktopImageUrl}
                             alt={currentHero.altText}
                             loading={activeSlide === 0 ? "eager" : "lazy"}
-                            className="w-full h-full object-contain object-center opacity-100"
+                            className="w-full h-full object-cover object-center opacity-100"
                           />
                         </picture>
                       </motion.div>
@@ -201,7 +201,7 @@ export function HomeClient() {
                             src={currentHero.desktopImageUrl}
                             alt={currentHero.altText}
                             loading={activeSlide === 0 ? "eager" : "lazy"}
-                            className="w-full h-full object-contain object-center opacity-100"
+                            className="w-full h-full object-cover object-center opacity-100"
                           />
                         </picture>
                       </motion.div>
@@ -223,7 +223,7 @@ export function HomeClient() {
                           src={currentHero.desktopImageUrl}
                           alt={currentHero.altText}
                           loading={activeSlide === 0 ? "eager" : "lazy"}
-                          className="w-full h-full object-contain object-center opacity-70"
+                          className="w-full h-full object-cover object-center opacity-70"
                         />
                       </picture>
                     </motion.div>
