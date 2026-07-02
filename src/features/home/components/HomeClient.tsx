@@ -107,12 +107,12 @@ export function HomeClient() {
     if (activeBanners.length > 0) {
       return activeBanners.map((b: any) => ({
         id: b.id,
-        tagline: b.subtitle || 'Private Collection',
-        title: b.title,
-        description: 'Experience the exquisite aroma of our selected collections.',
+        tagline: b.subtitle || (b.title ? 'Private Collection' : ''),
+        title: b.title || '',
+        description: b.title ? 'Experience the exquisite aroma of our selected collections.' : '',
         image: b.image_url,
         link: '#catalog-section',
-        btnText: 'Shop Collection',
+        btnText: b.title ? 'Shop Collection' : '',
       }));
     }
     return [];
@@ -150,81 +150,136 @@ export function HomeClient() {
                 transition={{ duration: 1.2, ease: 'easeInOut' }}
                 className="absolute inset-0 w-full h-full"
               >
-                {/* Background image with continuous Ken Burns zoom */}
-                <motion.div 
-                  initial={{ scale: 1.08 }}
-                  animate={{ scale: 1.01 }}
-                  transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0 w-full h-full"
-                >
-                  <OptimizedImage
-                    src={currentHero.image}
-                    alt={currentHero.title}
-                    fill
-                    priority
-                    loading="eager"
-                    className="object-cover opacity-70"
-                  />
-                </motion.div>
-
-                {/* Gradient overlays */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-transparent" />
-
-                {/* Hero text content */}
-                <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-12 lg:px-20 text-white">
-                  <motion.span
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="block font-sans text-[7px] sm:text-[10px] uppercase tracking-[0.35em] text-primary mb-1.5 sm:mb-3 font-semibold"
-                  >
-                    {currentHero.tagline}
-                  </motion.span>
-
-                  <motion.h1
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.25, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                    className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light tracking-wider text-white leading-[1.1] max-w-lg"
-                  >
-                    {currentHero.title}
-                  </motion.h1>
-
-                  <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                    className="mt-4 font-sans text-[10px] sm:text-xs text-zinc-300 font-light tracking-wide max-w-xs sm:max-w-sm leading-relaxed hidden sm:block"
-                  >
-                    {currentHero.description}
-                  </motion.p>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="mt-4 sm:mt-8 flex items-center gap-4"
-                  >
-                    {currentHero.link.startsWith('#') ? (
-                      <button
-                        onClick={() => {
-                          const el = document.getElementById(currentHero.link.substring(1));
-                          if (el) el.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                        className="btn-shimmer font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-4 sm:px-8 h-8 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg"
+                {/* Clean Image / Clickable banner vs Cinematic text overlay */}
+                {!currentHero.title ? (
+                  currentHero.link.startsWith('#') ? (
+                    <button
+                      onClick={() => {
+                        const el = document.getElementById(currentHero.link.substring(1));
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="absolute inset-0 w-full h-full block text-left cursor-pointer z-10"
+                    >
+                      <motion.div 
+                        initial={{ scale: 1.08 }}
+                        animate={{ scale: 1.01 }}
+                        transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
+                        className="absolute inset-0 w-full h-full"
                       >
-                        {currentHero.btnText} <ArrowRight className="h-3 w-3" />
-                      </button>
-                    ) : (
-                      <Link href={currentHero.link}>
-                        <button className="btn-shimmer font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-4 sm:px-8 h-8 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg">
-                          {currentHero.btnText} <ArrowRight className="h-3 w-3" />
-                        </button>
-                      </Link>
-                    )}
-                  </motion.div>
-                </div>
+                        <OptimizedImage
+                          src={currentHero.image}
+                          alt="Banner"
+                          fill
+                          priority
+                          loading="eager"
+                          className="object-cover opacity-100"
+                        />
+                      </motion.div>
+                    </button>
+                  ) : (
+                    <Link href={currentHero.link} className="absolute inset-0 w-full h-full block cursor-pointer z-10">
+                      <motion.div 
+                        initial={{ scale: 1.08 }}
+                        animate={{ scale: 1.01 }}
+                        transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
+                        className="absolute inset-0 w-full h-full"
+                      >
+                        <OptimizedImage
+                          src={currentHero.image}
+                          alt="Banner"
+                          fill
+                          priority
+                          loading="eager"
+                          className="object-cover opacity-100"
+                        />
+                      </motion.div>
+                    </Link>
+                  )
+                ) : (
+                  <>
+                    {/* Background image with continuous Ken Burns zoom */}
+                    <motion.div 
+                      initial={{ scale: 1.08 }}
+                      animate={{ scale: 1.01 }}
+                      transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
+                      className="absolute inset-0 w-full h-full"
+                    >
+                      <OptimizedImage
+                        src={currentHero.image}
+                        alt={currentHero.title}
+                        fill
+                        priority
+                        loading="eager"
+                        className="object-cover opacity-70"
+                      />
+                    </motion.div>
+
+                    {/* Gradient overlays */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-transparent" />
+
+                    {/* Hero text content */}
+                    <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-12 lg:px-20 text-white z-10">
+                      {currentHero.tagline && (
+                        <motion.span
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                          className="block font-sans text-[7px] sm:text-[10px] uppercase tracking-[0.35em] text-primary mb-1.5 sm:mb-3 font-semibold"
+                        >
+                          {currentHero.tagline}
+                        </motion.span>
+                      )}
+
+                      <motion.h1
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.25, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                        className="font-serif text-2xl sm:text-5xl lg:text-6xl font-light tracking-wider text-white leading-[1.1] max-w-lg"
+                      >
+                        {currentHero.title}
+                      </motion.h1>
+
+                      {currentHero.description && (
+                        <motion.p
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.35, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                          className="mt-4 font-sans text-[10px] sm:text-xs text-zinc-300 font-light tracking-wide max-w-xs sm:max-w-sm leading-relaxed hidden sm:block"
+                        >
+                          {currentHero.description}
+                        </motion.p>
+                      )}
+
+                      {currentHero.btnText && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                          className="mt-4 sm:mt-8 flex items-center gap-4"
+                        >
+                          {currentHero.link.startsWith('#') ? (
+                            <button
+                              onClick={() => {
+                                const el = document.getElementById(currentHero.link.substring(1));
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                              }}
+                              className="btn-shimmer font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-4 sm:px-8 h-8 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg"
+                            >
+                              {currentHero.btnText} <ArrowRight className="h-3 w-3" />
+                            </button>
+                          ) : (
+                            <Link href={currentHero.link}>
+                              <button className="btn-shimmer font-sans text-[8px] sm:text-[10px] uppercase tracking-[0.22em] font-bold bg-primary text-primary-foreground px-4 sm:px-8 h-8 sm:h-10 flex items-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer rounded-lg">
+                                {currentHero.btnText} <ArrowRight className="h-3 w-3" />
+                              </button>
+                            </Link>
+                          )}
+                        </motion.div>
+                      )}
+                    </div>
+                  </>
+                )}
               </motion.div>
             </AnimatePresence>
 
