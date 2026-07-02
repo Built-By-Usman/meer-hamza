@@ -109,7 +109,7 @@ export async function proxy(request: NextRequest) {
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''};
     style-src 'self' 'unsafe-inline';
-    img-src 'self' data: images.unsplash.com ${cdnDomain} ${apiDomain};
+    img-src 'self' data: images.unsplash.com https://ijomcgyfvyvesmezpeub.supabase.co ${cdnDomain} ${apiDomain};
     connect-src 'self' ${apiDomain};
     font-src 'self';
     object-src 'none';
