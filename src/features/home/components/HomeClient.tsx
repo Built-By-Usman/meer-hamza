@@ -147,8 +147,8 @@ export function HomeClient() {
             1. CINEMATIC HERO SLIDER
         ═══════════════════════════════════════════════ */}
         {heroSlides.length > 0 && currentHero && (
-          <section className="relative w-full aspect-[12/5] lg:aspect-[36/11] lg:max-h-[550px] overflow-hidden group/hero">
-            
+          <section className="relative w-full overflow-hidden group/hero">
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeSlide}
@@ -156,9 +156,11 @@ export function HomeClient() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5, ease: 'easeInOut' }}
-                className="absolute inset-0 w-full h-full"
+                className="w-full"
               >
-                {/* Clean Image / Clickable banner vs Cinematic text overlay */}
+                {/* ── IMAGE-ONLY BANNER (no title) ─────────────────────────
+                    Uses w-full h-auto → image defines its own height.
+                    Zero cropping. Zero black bars. Always shows full image. */}
                 {!currentHero.title ? (
                   currentHero.link.startsWith('#') ? (
                     <button
@@ -166,58 +168,47 @@ export function HomeClient() {
                         const el = document.getElementById(currentHero.link.substring(1));
                         if (el) el.scrollIntoView({ behavior: 'smooth' });
                       }}
-                      className="absolute inset-0 w-full h-full block text-left cursor-pointer z-10"
+                      className="block w-full cursor-pointer"
                     >
-                      <motion.div 
-                        initial={{ scale: 1.08 }}
-                        animate={{ scale: 1.01 }}
-                        transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute inset-0 w-full h-full"
-                      >
-                        <picture className="absolute inset-0 w-full h-full">
-                          <source media="(max-width: 640px)" srcSet={currentHero.mobileImageUrl} />
-                          <source media="(max-width: 1024px)" srcSet={currentHero.tabletImageUrl} />
-                          <img
-                            src={currentHero.desktopImageUrl}
-                            alt={currentHero.altText}
-                            loading={activeSlide === 0 ? "eager" : "lazy"}
-                            className="w-full h-full object-cover object-center opacity-100"
-                          />
-                        </picture>
-                      </motion.div>
+                      <picture className="block w-full">
+                        <source media="(max-width: 640px)"  srcSet={currentHero.mobileImageUrl} />
+                        <source media="(max-width: 1024px)" srcSet={currentHero.tabletImageUrl} />
+                        <img
+                          src={currentHero.desktopImageUrl}
+                          alt={currentHero.altText}
+                          loading={activeSlide === 0 ? "eager" : "lazy"}
+                          className="w-full h-auto block"
+                        />
+                      </picture>
                     </button>
                   ) : (
-                    <Link href={currentHero.link} className="absolute inset-0 w-full h-full block cursor-pointer z-10">
-                      <motion.div 
-                        initial={{ scale: 1.08 }}
-                        animate={{ scale: 1.01 }}
-                        transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute inset-0 w-full h-full"
-                      >
-                        <picture className="absolute inset-0 w-full h-full">
-                          <source media="(max-width: 640px)" srcSet={currentHero.mobileImageUrl} />
-                          <source media="(max-width: 1024px)" srcSet={currentHero.tabletImageUrl} />
-                          <img
-                            src={currentHero.desktopImageUrl}
-                            alt={currentHero.altText}
-                            loading={activeSlide === 0 ? "eager" : "lazy"}
-                            className="w-full h-full object-cover object-center opacity-100"
-                          />
-                        </picture>
-                      </motion.div>
+                    <Link href={currentHero.link} className="block w-full cursor-pointer">
+                      <picture className="block w-full">
+                        <source media="(max-width: 640px)"  srcSet={currentHero.mobileImageUrl} />
+                        <source media="(max-width: 1024px)" srcSet={currentHero.tabletImageUrl} />
+                        <img
+                          src={currentHero.desktopImageUrl}
+                          alt={currentHero.altText}
+                          loading={activeSlide === 0 ? "eager" : "lazy"}
+                          className="w-full h-auto block"
+                        />
+                      </picture>
                     </Link>
                   )
                 ) : (
-                  <>
-                    {/* Background image with continuous Ken Burns zoom */}
-                    <motion.div 
+                  /* ── TEXT-OVERLAY BANNER (has title) ─────────────────────
+                      Needs a fixed container so text can be absolutely
+                      positioned. Uses aspect-ratio matching each image. */
+                  <div className="relative w-full aspect-[12/5] lg:aspect-[36/11] lg:max-h-[550px]">
+                    {/* Background image with Ken Burns zoom */}
+                    <motion.div
                       initial={{ scale: 1.08 }}
                       animate={{ scale: 1.01 }}
                       transition={{ duration: 6.5, ease: [0.16, 1, 0.3, 1] }}
                       className="absolute inset-0 w-full h-full"
                     >
                       <picture className="absolute inset-0 w-full h-full">
-                        <source media="(max-width: 640px)" srcSet={currentHero.mobileImageUrl} />
+                        <source media="(max-width: 640px)"  srcSet={currentHero.mobileImageUrl} />
                         <source media="(max-width: 1024px)" srcSet={currentHero.tabletImageUrl} />
                         <img
                           src={currentHero.desktopImageUrl}
@@ -292,13 +283,13 @@ export function HomeClient() {
                         </motion.div>
                       )}
                     </div>
-                  </>
+                  </div>
                 )}
               </motion.div>
             </AnimatePresence>
 
             {/* Navigation Dot Indicators */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
               {heroSlides.map((slide, i) => (
                 <button
                   key={slide.id}
@@ -312,7 +303,7 @@ export function HomeClient() {
               ))}
             </div>
 
-            {/* Left/Right controls (Shown on hover) */}
+            {/* Left/Right controls */}
             <button
               onClick={() => setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
               className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover/hero:opacity-100 hidden sm:flex z-20"
@@ -332,6 +323,7 @@ export function HomeClient() {
             <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
           </section>
         )}
+
 
 
 
